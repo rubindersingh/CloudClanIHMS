@@ -26,6 +26,9 @@ repositories {
 	mavenCentral()
 }
 
+bootRun {
+	addResources = true
+}
 
 dependencies {
 	//compile('org.springframework.boot:spring-boot-starter-actuator')
@@ -40,4 +43,9 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-thymeleaf")
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	compile 'org.im4java:im4java:1.4.0'
+	compile 'com.datastax.cassandra:cassandra-driver-core:3.1.0'
+	compile 'com.datastax.cassandra:cassandra-driver-core:3.1.0'
+	compile 'com.datastax.cassandra:cassandra-driver-mapping:3.1.0'
+	compile 'org.apache.commons:commons-lang3:3.4'
+
 }
