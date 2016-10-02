@@ -12,6 +12,7 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'idea'
 apply plugin: 'spring-boot'
 
 jar {
@@ -31,10 +32,12 @@ dependencies {
 	//compile('org.springframework.boot:spring-boot-starter-aop')
 	//compile('org.springframework.boot:spring-boot-starter-data-cassandra')
 	//compile('org.springframework.boot:spring-boot-starter-data-redis')
-	//compile('org.springframework.boot:spring-boot-devtools')
+	//
 	//compile('org.springframework.boot:spring-boot-starter-jersey')
 	//compile('org.springframework.boot:spring-boot-starter-security')
 	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('org.springframework.boot:spring-boot-devtools')
+	compile("org.springframework.boot:spring-boot-starter-thymeleaf")
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	compile 'org.im4java:im4java:1.4.0'
 }
