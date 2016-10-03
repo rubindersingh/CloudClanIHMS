@@ -31,4 +31,8 @@ public class CassandraSessionService {
     public MappingManager getManager() {
         return manager;
     }
+
+    public Session getSession() {
+        return session;
+    }
 }

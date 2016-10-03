@@ -18,9 +18,4 @@ public class UserService {
         Mapper<User> userMapper = cassandraSessionService.getManager().mapper(User.class);
         userMapper.save(user);
     }
-
-    public User find(User user) {
-        Mapper<User> userMapper = cassandraSessionService.getManager().mapper(User.class);
-        return null;
-    }
 }
