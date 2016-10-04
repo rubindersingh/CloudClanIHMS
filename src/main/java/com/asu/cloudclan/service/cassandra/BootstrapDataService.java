@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 /**
  * Created by ubuntu on 10/2/16.
  */
-@Service
+
 public class BootstrapDataService implements InitializingBean {
 
     @Autowired
@@ -32,7 +32,7 @@ public class BootstrapDataService implements InitializingBean {
 
             User user = new User("rsingh60@asu.edu","123456","Rubinder","Singh", cloudContainer.getCloudId());
             userService.create(user);
-9
+
             User user2 = new User("uutkarsh@asu.edu","123456","Utkarsh","Prakash", cloudContainer2.getCloudId());
             userService.create(user2);
             System.out.println("Bootstrapped");

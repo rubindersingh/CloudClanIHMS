@@ -41,12 +41,16 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-devtools')
 	compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+	compile("org.springframework.boot:spring-boot-starter-amqp")
+	compile('org.springframework.boot:spring-boot-starter-data-redis')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	compile 'org.im4java:im4java:1.4.0'
 	compile 'com.datastax.cassandra:cassandra-driver-core:3.1.0'
 	compile 'com.datastax.cassandra:cassandra-driver-core:3.1.0'
 	compile 'com.datastax.cassandra:cassandra-driver-mapping:3.1.0'
 	compile 'org.apache.commons:commons-lang3:3.4'
+	compile 'org.springframework.data:spring-data-redis:1.7.3.RELEASE'
+	compile "redis.clients:jedis:2.9.0"
 
 	//Image Library Dependencies
 	compile 'com.sksamuel.scrimage:scrimage-core_2.11:2.1.7'
