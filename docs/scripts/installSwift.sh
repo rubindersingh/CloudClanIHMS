@@ -59,8 +59,34 @@ git clone https://github.com/openstack/swift.git
 cd $HOME/swift; sudo pip install -r requirements.txt; sudo python setup.py develop; cd -
 cd $HOME/swift; sudo pip install -r test-requirements.txt
 
+#RSync setup
 sudo cp $HOME/swift/doc/saio/rsyncd.conf /etc/
 sudo sed -i "s/<your-user-name>/${USER}/" /etc/rsyncd.conf
+sudo sed -i "s/RSYNC_ENABLE=false/RSYNC_ENABLE=true/" /etc/default/rsync
+sudo setenforce Permissive
+sudo setsebool -P rsync_full_access 1
+sudo service rsync restart
+rsync rsync://pub@localhost/
 
 
+#Configure Nodes
+sudo rm -rf /etc/swift
+cd $HOME/swift/doc; sudo cp -r saio/swift /etc/swift; cd -
+sudo chown -R ${USER}:${USER} /etc/swift
+find /etc/swift/ -name \*.conf | xargs sudo sed -i "s/<your-user-name>/${USER}/"
+
+#Swift running scripts
+mkdir -p $HOME/bin
+cd $HOME/swift/doc; cp saio/bin/* $HOME/bin; cd -
+chmod +x $HOME/bin/*
+
+echo "export SAIO_BLOCK_DEVICE=/srv/swift-disk" >> $HOME/.bashrc
+sed -i "/find \/var\/log\/swift/d" $HOME/bin/resetswift
+cp $HOME/swift/test/sample.conf /etc/swift/test.conf
+echo "export SWIFT_TEST_CONFIG_FILE=/etc/swift/test.conf" >> $HOME/.bashrc
+echo "export PATH=${PATH}:$HOME/bin" >> $HOME/.bashrc
+. $HOME/.bashrc
+
+remakerings
+startmain
 
