@@ -1,0 +1,88 @@
+**********************************************************************************************
+Author : Rubinder Singh
+Acknowledgement: I thank Datastax Enterprise for wonderful documentation which enabled me
+to learn and setup cassandra. More could be found at below link:
+http://docs.datastax.com/en/cassandra/3.x/
+**********************************************************************************************
+
+1. Execute installCassandra.sh script on all nodes on which you want to install cassandra.
+
+2. Decide on which nodes we want to make seed nodes and get public/private ip for all seed nodes.
+   Other nodes will be kept as additional nodes which will be added to cluster on need basis.
+
+3. You can refer to our sample cassandra seed nodes conf file(cassandra.yaml) from sample-conf directory
+   to get to know about configuration properties and their significance.
+
+4. We changed following properties for this project:
+
+    a. cluster_name : Put you cluster name here. Keep this cluster name common for all nodes.
+
+        # The name of the cluster. This is mainly used to prevent machines in
+        # one logical cluster from joining another.
+        cluster_name: 'CloudClan'
+
+    b. num_tokens : Change num tokens values relatively to your machine power. You can keep it
+       same as well but that would put uniform load on all machines.
+
+        # This defines the number of tokens randomly assigned to this node on the ring
+        # The more tokens, relative to other nodes, the larger the proportion of data
+        # that this node will store. You probably want all nodes to have the same number
+        # of tokens assuming they have equal hardware capability.
+        num_tokens: 256
+
+    c. -seeds: Put your seed nodes ip addresses comma seperated.
+
+        # seeds is actually a comma-delimited list of addresses.
+        # Ex: "<ip1>,<ip2>,<ip3>"
+        - seeds: "192.168.1.4,192.168.1.5"
+
+    d. concurrent_reads and concurrent_writes : Follow thumb rules given in conf file.
+
+        concurrent_reads: 16
+        concurrent_writes: 16
+
+    e. listen_address : Change it to Machine IP address
+
+        listen_address: 192.168.1.4
+
+    f. rpc_address : Change it to Machine IP address
+
+        rpc_address: 192.168.1.4
+
+    g. endpoint_snitch : This property helps cluster nodes to figure out the structure of cluster.
+       We have used GossipingPropertyFileSnitch by which nodes can find structure after talking
+       about their cassandra-rackdc.properties. We are using single datacenter and multiple rack
+       config here.
+
+        endpoint_snitch: GossipingPropertyFileSnitch
+
+    h. auto_bootstrap : This property will not exist in default cassandra provided property file as
+       it is optional property and by default its value is true. We added this property to seed nodes
+       config files only and value is set to false to prevent seed nodes from auto bootstrap.
+       This property will stay true for additional nodes as those nodes need to take data backup from
+       existing nodes.
+
+        auto_bootstrap: false
+
+5. After changing these properties on individual nodes, bring up these nodes using following commands:
+
+    cd $CASSANDRA_HOME/bin
+    ./cassandra
+
+6. After all nodes are up, we can check status of our cluster using nodetool.
+
+    This is output of nodetool on our server.
+
+    $CASSANDRA_HOME/bin$ ./nodetool status
+    Datacenter: dc1
+    ===============
+    Status=Up/Down
+    |/ State=Normal/Leaving/Joining/Moving
+    --  Address  	Load   	Tokens   	Owns (effective)  Host ID                           	Rack
+    UN  192.168.1.4  286.71 KiB  256      	100.0%        	fbe5a77c-cc9f-4ede-8055-d1e649e7c472  rack1
+    UN  192.168.1.5  233.16 KiB  256      	100.0%        	bb29b24f-c765-42d4-9dc3-1c43a6a93b74  rack2
+
+7. When we want to add more servers to this cluster, we can start server using provided configuration
+   property file after changing listen_address and rpc_address to server ip address and setting auto_bootstrap
+   to true.
+
