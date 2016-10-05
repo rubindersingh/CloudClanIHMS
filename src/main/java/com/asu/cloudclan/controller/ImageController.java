@@ -21,6 +21,7 @@ import com.asu.cloudclan.service.ImageTransforamtionService;
 
 @RestController
 public class ImageController {
+
 	@Autowired
 	ImageTransforamtionService imageTransforamtionService;
 
