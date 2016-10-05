@@ -10,6 +10,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.asu.cloudclan.vo.TransformationVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,10 +57,7 @@ public class ImageController {
 	}
 	
 	@RequestMapping(value = "/images/{state}/{containerId}/**", method = RequestMethod.GET)
-	public String getImageTransient(HttpServletResponse response, @PathVariable("containerId")String containerId, @PathVariable("state")String state,HttpServletRequest request,
-			@RequestParam(value="h", required=false)Integer height,@RequestParam(value="w", required=false)Integer width,@RequestParam(value="pw", required=false)Integer pad,
-			@RequestParam(value="fl", required=false)String filter,@RequestParam(value="c", required=false)String crop, @RequestParam(value="g", required=false)String gravity,
-			@RequestParam(value = "r", required=false)String radius, @RequestParam(value = "o", required=false)String opacity) throws IOException {
+	public String getImageTransient(HttpServletResponse response, TransformationVO transformationVO, @PathVariable("containerId")String containerId, @PathVariable("state")String state, HttpServletRequest request) throws IOException {
 			String imagePath = (String)request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
 			String bestMatchPattern = (String ) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
 
@@ -67,12 +65,14 @@ public class ImageController {
 		    String finalPath = apm.extractPathWithinPattern(bestMatchPattern, imagePath);
 		    System.out.println(containerId);	
 		    System.out.println(state);
-			System.out.println(finalPath);	
-			System.out.println(height);	
-			
-			System.out.println(width);	
-			System.out.println(pad);	
-			System.out.println(filter);	
+			System.out.println(finalPath);
+
+			System.out.println(transformationVO.getHeight());
+			System.out.println(transformationVO.getWidth());
+			System.out.println(transformationVO.getFilter());
+			System.out.println(transformationVO.getGravity());
+			System.out.println(transformationVO.getOpacity());
+			System.out.println(transformationVO.getRadius());
 			return "done";
 	}
 	
