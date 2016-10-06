@@ -20,6 +20,18 @@ public class TransformationVO {
     @JsonProperty("o")
     Double opacity;
 
+    @JsonProperty("r")
+    Integer radius;
+
+    /*@JsonProperty("c")
+    Integer crop;*/
+
+    @JsonProperty("g")
+    String gravity;
+
+    /*@JsonProperty("pw")
+    Double padding;*/
+
     public Integer getWidth() {
         return width;
     }
@@ -52,11 +64,21 @@ public class TransformationVO {
         this.opacity = opacity;
     }
 
+    public Integer getRadius() { return radius;    }
+
+    public void setRadius(Integer radius) { this.radius = radius;    }
+
+    public String getGravity() { return gravity;    }
+
+    public void setGravity(String gravity) { this.gravity = gravity;    }
+
     @Override
     public String toString() {
         return "w_" + width +
                 ",h_" + height +
-                ",filter_" + filter +
-                ", opacity_" + opacity;
+                ",f_" + filter +
+                ",o_" + opacity +
+                ",r_ " + radius +
+                ",g_" + gravity;
     }
 }
