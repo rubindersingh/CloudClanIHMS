@@ -16,11 +16,11 @@
 
         $sql = "INSERT INTO 'users' (username, pass) VALUES ('$username', '$pass');";
 
-        if(mysqli_query($conn,$sql){
+        /*if(mysqli_query($conn,$sql){
             echo("Data saved");
      }  else{
             echo("error");
-            }
+            }*/
      mysqli_close($conn);
 
 

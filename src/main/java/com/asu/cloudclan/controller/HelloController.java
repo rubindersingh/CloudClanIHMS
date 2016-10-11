@@ -2,6 +2,7 @@ package com.asu.cloudclan.controller;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,8 +21,8 @@ public class HelloController {
         return "Greetings from Spring Boot!";
     }
 
-    @RequestMapping("/login")
-    public String login(@RequestParam String uname) {
-        return "Hello "+uname;
+    @RequestMapping(value="/login1", method = RequestMethod.POST)
+    public String login(){
+        return "Data saved in db";
     }
 }
