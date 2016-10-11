@@ -1,21 +1,26 @@
 <html>
-<head></head>
+<head>
+   <title>Registration Form</title>
+</head>
 <body>
-   <h1>Login</h1>
-   <form name='f' action="login" method='POST'>
-      <table>
-         <tr>
-            <td>User:</td>
-            <td><input type='text' name='username' value=''></td>
-         </tr>
-         <tr>
-            <td>Password:</td>
-            <td><input type='password' name='password' /></td>
-         </tr>
-         <tr>
-            <td><input name="submit" type="submit" value="submit" /></td>
-         </tr>
-      </table>
-  </form>
+<link href = "signup.css" type = "text/css" rel = "stylesheet" />
+<h2>Sign Up</h2>
+<form name = "form1" action="modified.php" method = "post" enctype = "multipart/form-data" >
+   <div class = "container">
+      <div class = "form_group">
+         <label>User Name:</label>
+         <input type = "text" name = "username" value = "" required/>
+      </div>
+
+      <div class = "form_group">
+         <label>Password:</label>
+         <input type = "password" name = "pass" value = "" required/>
+      </div>
+
+      <div class = "form_group">
+         <input type = "submit"/>
+      </div>
+   </div>
+</form>
 </body>
 </html>

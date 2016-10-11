@@ -17,15 +17,15 @@ public class Image
     @PartitionKey
     @Column(name = "url")
     private String url;
-    @Column(name = "cloud_name")
-    private String cloudName;
+    @Column(name = "container_id")
+    private String containerId;
     @Column(name = "metadata")
     @FrozenValue
     private Map<String, ImageMetadata> metadataMap;
 
-    public Image(String url, String cloudName, Map<String, ImageMetadata> metadataMap) {
+    public Image(String url, String containerId, Map<String, ImageMetadata> metadataMap) {
         this.url = url;
-        this.cloudName = cloudName;
+        this.containerId = containerId;
         this.metadataMap = metadataMap;
     }
 
@@ -40,12 +40,12 @@ public class Image
         this.url = url;
     }
 
-    public String getCloudName() {
-        return cloudName;
+    public String getContainerId() {
+        return containerId;
     }
 
-    public void setCloudName(String cloudName) {
-        this.cloudName = cloudName;
+    public void setContainerId(String containerId) {
+        this.containerId = containerId;
     }
 
     public Map<String, ImageMetadata> getMetadataMap() {
