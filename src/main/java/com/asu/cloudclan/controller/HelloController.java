@@ -19,4 +19,9 @@ public class HelloController {
         System.out.println("Performing expensive calculation...");
         return "Greetings from Spring Boot!";
     }
+
+    @RequestMapping("/login")
+    public String login(@RequestParam String uname) {
+        return "Hello "+uname;
+    }
 }
