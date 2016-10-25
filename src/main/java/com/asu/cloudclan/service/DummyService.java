@@ -8,4 +8,5 @@ public class DummyService {
     public String imageName(String path,Integer width,Integer height,String filter) {
         return "here it is";
     }
+
 }
