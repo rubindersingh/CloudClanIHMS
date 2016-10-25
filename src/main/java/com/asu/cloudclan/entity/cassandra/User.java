@@ -20,15 +20,12 @@ public class User
     private String firstname;
     @Column(name = "last_name")
     private String lastname;
-    @Column(name = "cloud_name")
-    private String cloudname;
 
-    public User(String emailId, String password, String firstname, String lastname, String cloudname) {
+    public User(String emailId, String password, String firstname, String lastname) {
         this.emailId = emailId;
         this.password = password;
         this.firstname = firstname;
         this.lastname = lastname;
-        this.cloudname = cloudname;
     }
 
     public String getEmailId() {
@@ -61,13 +58,5 @@ public class User
 
     public void setLastname(String lastname) {
         this.lastname = lastname;
-    }
-
-    public String getCloudname() {
-        return cloudname;
-    }
-
-    public void setCloudname(String cloudname) {
-        this.cloudname = cloudname;
     }
 }

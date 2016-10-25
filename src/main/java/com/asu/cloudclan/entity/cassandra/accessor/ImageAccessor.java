@@ -1,5 +1,6 @@
-package com.asu.cloudclan.entity.cassandra;
+package com.asu.cloudclan.entity.cassandra.accessor;
 
+import com.asu.cloudclan.entity.cassandra.Image;
 import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Param;
@@ -13,4 +14,6 @@ public interface ImageAccessor {
 
     @Query("SELECT * FROM image WHERE cloud_name=:cn")
     Result<Image> getByCloudName(@Param("cn") String cloudName);
+
+
 }

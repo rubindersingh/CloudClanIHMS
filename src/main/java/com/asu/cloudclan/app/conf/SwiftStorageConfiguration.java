@@ -11,14 +11,19 @@ import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 /**
  * Created by rubinder on 10/3/16.
  */
-@Configuration
+
 public class SwiftStorageConfiguration {
+
+    @Autowired
+    private Environment env;
 
     @Bean
     public AccountConfig accountConfig() {

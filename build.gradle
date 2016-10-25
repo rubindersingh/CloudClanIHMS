@@ -37,8 +37,9 @@ dependencies {
 	//compile('org.springframework.boot:spring-boot-starter-data-redis')
 	//
 	//compile('org.springframework.boot:spring-boot-starter-jersey')
-	//compile('org.springframework.boot:spring-boot-starter-security')
+	//
 	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('org.springframework.boot:spring-boot-starter-security')
 	compile('org.springframework.boot:spring-boot-devtools')
 	compile("org.springframework.boot:spring-boot-starter-thymeleaf")
 	compile("org.springframework.boot:spring-boot-starter-amqp")
@@ -50,6 +51,7 @@ dependencies {
 	compile 'com.datastax.cassandra:cassandra-driver-mapping:3.1.0'
 	compile 'org.apache.commons:commons-lang3:3.4'
 	compile 'org.springframework.data:spring-data-redis:1.7.3.RELEASE'
+	compile 'org.springframework.session:spring-session-data-redis:1.2.2.RELEASE'
 	compile "redis.clients:jedis:2.9.0"
 	compile "org.javaswift:joss:0.9.7"
 	compile "commons-io:commons-io:2.5"
