@@ -164,12 +164,12 @@ progress::-webkit-progress-bar-value {
   $(function() {
 	  function callme(e) {
 		  var data = new FormData();
-		  data.append('name', 'myfiles');
+		  data.append('containerId', 'aaaa');
 		  $.each(e.target.files, function(i, file) {
-		      data.append('file', file);
+		      data.append('files', file);
 		  });
 		  $.ajax({
-			    url: '/uploadFiles',
+			    url: '/images/',
 			    data: data,
 			    cache: false,
 			    contentType: false,
@@ -177,6 +177,7 @@ progress::-webkit-progress-bar-value {
 			    type: 'POST',
 			    success: function(data){
 			        alert('Done');
+                    console.log(data);
 			    }
 			});
 		  /* fileList = e.target.files;

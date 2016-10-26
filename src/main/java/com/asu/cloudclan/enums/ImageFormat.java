@@ -22,7 +22,7 @@ public enum ImageFormat {
     static {
         allFormats = new HashMap<>();
         for (ImageFormat imageFormat : ImageFormat.values()) {
-            supportedFormats.put(imageFormat.extension, imageFormat);
+            allFormats.put(imageFormat.extension, imageFormat);
         }
 
         supportedFormats = new HashMap<>();

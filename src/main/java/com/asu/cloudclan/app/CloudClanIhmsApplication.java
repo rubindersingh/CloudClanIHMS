@@ -27,12 +27,6 @@ public class CloudClanIhmsApplication {
 
 	public static void main(String[] args) {
 		ApplicationContext ctx = SpringApplication.run(CloudClanIhmsApplication.class, args);
-		ImageService imageService = (ImageService) ctx.getBean("imageService");
-		//Image image = new Image("/my/image/2.jpg","mycont1",100,0,new HashMap<>());
-		ImageMetadata metadata = new ImageMetadata("jhjhhbhmvv",50,50,1000,"w=50&h=50","image/jpeg");
-		//imageService.addTransformation("/my/image/2.jpg",metadata);
-		imageService.doTransformation();
-		System.out.println("Hello");
 	}
 
 }

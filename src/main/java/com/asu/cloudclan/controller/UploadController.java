@@ -23,7 +23,7 @@ public class UploadController {
     @Autowired
     UploadService uploadService;
 
-    @RequestMapping(value="/images/{containerId}/", method = RequestMethod.POST, produces = {"application/json"})
+    @RequestMapping(value="/images/", method = RequestMethod.POST, produces = {"application/json"})
     public List<ImageVO> upload(UploadVO uploadVO) {
         return uploadService.upload(uploadVO);
     }

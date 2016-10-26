@@ -4,8 +4,12 @@ spring:
     thymeleaf:
       cache: false
       mode: HTML5
+    redis:
+      cluster:
+        nodes: 192.168.1.4:6379,192.168.1.5:6379
 server:
     port: 8888
+
 ---
 spring:
     profiles: dev
