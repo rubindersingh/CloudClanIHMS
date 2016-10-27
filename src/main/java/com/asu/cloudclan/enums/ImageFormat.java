@@ -47,7 +47,7 @@ public enum ImageFormat {
         return supportedMimeTypes.contains(mimeType);
     }
 
-    public ImageFormat getByExtension(String extension) {
+    public static ImageFormat getByExtension(String extension) {
         return allFormats.get(extension);
     }
 

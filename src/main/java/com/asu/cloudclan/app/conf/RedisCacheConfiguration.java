@@ -27,10 +27,11 @@ public class RedisCacheConfiguration extends CachingConfigurerSupport {
 
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() {
-        List<String> nodes = new ArrayList<>();
-        nodes.add("192.168.1.4:6379");
+        /*List<String> nodes = new ArrayList<>();
+        nodes.add("localhost:6379");
         nodes.add("192.168.1.5:6379");
-        JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(new RedisClusterConfiguration(nodes));
+        JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(new RedisClusterConfiguration(nodes));*/
+        JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
         return jedisConnectionFactory;
     }
 

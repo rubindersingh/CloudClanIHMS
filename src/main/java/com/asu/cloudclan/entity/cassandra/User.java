@@ -28,6 +28,10 @@ public class User
         this.lastname = lastname;
     }
 
+    public User() {
+    }
+
+
     public String getEmailId() {
         return emailId;
     }

@@ -24,8 +24,9 @@ public class UploadController {
     UploadService uploadService;
 
     @RequestMapping(value="/images/", method = RequestMethod.POST, produces = {"application/json"})
-    public List<ImageVO> upload(UploadVO uploadVO) {
-        return uploadService.upload(uploadVO);
+    public UploadVO upload(UploadVO uploadVO) {
+        uploadService.upload(uploadVO);
+        return uploadVO;
     }
 }
 

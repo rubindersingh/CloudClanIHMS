@@ -1,6 +1,5 @@
 package com.asu.cloudclan.controller;
 
-import com.asu.cloudclan.entity.cassandra.SignupUser;
 import com.asu.cloudclan.entity.cassandra.User;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.ui.Model;
@@ -26,6 +25,7 @@ public class HelloController {
         return "Data saved in db";
     }*/
 
+/*
     @GetMapping("/login1")
     public String signUpForm(Model model) {
         model.addAttribute("signupUser", new SignupUser());
@@ -36,5 +36,6 @@ public class HelloController {
     public String signUpSubmit(@ModelAttribute SignupUser signupUser) {
         return "User signed up";
     }
+*/
 
 }
