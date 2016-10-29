@@ -1,86 +1,219 @@
 package com.asu.cloudclan.vo;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.map.ser.std.StdArraySerializers;
+import com.asu.cloudclan.util.ValidationUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sksamuel.scrimage.filter.BlurFilter;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by ubuntu on 10/4/16.
  */
 
 public class TransformationVO {
-    @JsonProperty("w")
-    Integer width;
+    public Integer w;
+    public Integer h;
+    public String op; //, resize, max, overlay, pad, underlay
+    public String pad;
+    public String pad_c;
+    public String fit_c;
+    public String fltr;
+    public String flip;
+    public String rot;
+    public Double scale;
 
-    @JsonProperty("h")
-    Integer height;
+    @JsonIgnore
+    public FinalTransformationVO finalTransformationVO;
+    @JsonIgnore
+    public List<ErrorVO> errorVOs;
 
-    @JsonProperty("filter")
-    String filter;
-
-    @JsonProperty("o")
-    Double opacity;
-
-    @JsonProperty("r")
-    Integer radius;
-
-    /*@JsonProperty("c")
-    Integer crop;*/
-
-    @JsonProperty("g")
-    String gravity;
-
-    /*@JsonProperty("pw")
-    Double padding;*/
-
-    public Integer getWidth() {
-        return width;
+    public Integer getW() {
+        return w;
     }
 
-    public void setWidth(Integer width) {
-        this.width = width;
+    public void setW(Integer w) {
+        this.w = w;
     }
 
-    public Integer getHeight() {
-        return height;
+    public Integer getH() {
+        return h;
     }
 
-    public void setHeight(Integer height) {
-        this.height = height;
+    public void setH(Integer h) {
+        this.h = h;
     }
 
-    public String getFilter() {
-        return filter;
+    public String getOp() {
+        return op;
     }
 
-    public void setFilter(String filter) {
-        this.filter = filter;
+    public void setOp(String op) {
+        this.op = op;
     }
 
-    public Double getOpacity() {
-        return opacity;
+    public String getFltr() {
+        return fltr;
     }
 
-    public void setOpacity(Double opacity) {
-        this.opacity = opacity;
+    public void setFltr(String fltr) {
+        this.fltr = fltr;
     }
 
-    public Integer getRadius() { return radius;    }
+    public String getFlip() {
+        return flip;
+    }
 
-    public void setRadius(Integer radius) { this.radius = radius;    }
+    public void setFlip(String flip) {
+        this.flip = flip;
+    }
 
-    public String getGravity() { return gravity;    }
+    public String getPad() {
+        return pad;
+    }
 
-    public void setGravity(String gravity) { this.gravity = gravity;    }
+    public void setPad(String pad) {
+        this.pad = pad;
+    }
 
-    @Override
-    public String toString() {
-        return "w_" + width +
-                ",h_" + height +
-                ",f_" + filter +
-                ",o_" + opacity +
-                ",r_ " + radius +
-                ",g_" + gravity;
+    public String getPad_c() {
+        return pad_c;
+    }
+
+    public void setPad_c(String pad_c) {
+        this.pad_c = pad_c;
+    }
+
+    public String getFit_c() {
+        return fit_c;
+    }
+
+    public void setFit_c(String fit_c) {
+        this.fit_c = fit_c;
+    }
+
+    public String getRot() {
+        return rot;
+    }
+
+    public void setRot(String rot) {
+        this.rot = rot;
+    }
+
+    public Double getScale() {
+        return scale;
+    }
+
+    public void setScale(Double scale) {
+        this.scale = scale;
+    }
+
+    public boolean validateAndConvert() {
+        try {
+            finalTransformationVO = new FinalTransformationVO();
+            finalTransformationVO.w = this.w != null ? this.w : 0;
+            finalTransformationVO.h = this.h != null ? this.h : 0;
+            if(this.op != null) {
+                if(this.op.equals("cover")) {
+                    if(this.w !=null || this.h !=null) {
+                        finalTransformationVO.cover = true;
+                    } else {
+                        return false;
+                    }
+                } else if(this.op.equals("fit")) {
+                    if(this.w !=null || this.h !=null) {
+                        finalTransformationVO.fit = true;
+                    } else {
+                        return false;
+                    }
+
+                    if(this.fit_c != null) {
+                        Integer[] colors = Arrays.asList(this.fit_c.split(",")).stream().map(Integer::parseInt).filter(num -> num>=0 && num<256).collect(Collectors.toList()).toArray(new Integer[0]);
+                        if(colors.length == 4) {
+                            finalTransformationVO.fit_c = true;
+                            finalTransformationVO.fitColorArray = colors;
+                        }
+                    }
+                } else {
+                    return false;
+                }
+            } else {
+                if(this.w !=null || this.h !=null) {
+                    finalTransformationVO.fit = true;
+                }
+            }
+
+            if(this.pad != null) {
+                Integer[] paddings = Arrays.asList(this.pad.split(",")).stream().map(Integer::parseInt).collect(Collectors.toList()).toArray(new Integer[0]);
+                Integer[] newPaddings = new Integer[4];
+                if(paddings.length == 4) {
+                    newPaddings = paddings;
+                } else if(paddings.length == 2) {
+                    newPaddings[0] = paddings[0];
+                    newPaddings[1] = paddings[1];
+                    newPaddings[2] = paddings[0];
+                    newPaddings[3] = paddings[1];
+                } else if(paddings.length == 1) {
+                    newPaddings[0] = paddings[0];
+                    newPaddings[1] = paddings[0];
+                    newPaddings[2] = paddings[0];
+                    newPaddings[3] = paddings[0];
+                } else {
+                    return false;
+                }
+
+                if(this.pad_c != null) {
+                    Integer[] colors = Arrays.asList(this.pad_c.split(",")).stream().map(Integer::parseInt).filter(num -> num>=0 && num<256).collect(Collectors.toList()).toArray(new Integer[0]);
+                    if(colors.length == 4) {
+                        finalTransformationVO.pad_c = true;
+                        finalTransformationVO.padColorArray = colors;
+                    }
+                }
+            }
+
+            if(this.flip != null) {
+                if(this.flip.equals("x")) {
+                    finalTransformationVO.flipX = true;
+                } else if(this.flip.equals("y")) {
+                    finalTransformationVO.flipY = true;
+                } else {
+                    return false;
+                }
+            }
+
+            if(this.fltr != null) {
+                if(ValidationUtil.isvalidFilter(this.fltr)) {
+                    finalTransformationVO.fltr = true;
+                    finalTransformationVO.filter = this.fltr;
+                } else {
+                    return false;
+                }
+            }
+
+            if(this.rot != null) {
+                List<String> rotations = Arrays.asList(this.rot.split(",")).stream().collect(Collectors.toList());
+                Set<String> unique = new HashSet<>(rotations);
+                boolean cond1 = unique.size()==2 && unique.contains("L") && unique.contains("R");
+                boolean cond2 = unique.size()==1 && (unique.contains("L") || unique.contains("R"));
+                if(cond1 || cond2) {
+                    finalTransformationVO.rotate = true;
+                    finalTransformationVO.rotations = rotations.toArray(new String[0]);
+                } else {
+                    return false;
+                }
+            }
+
+            if(this.scale != null) {
+                finalTransformationVO.scale = this.scale;
+            }
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

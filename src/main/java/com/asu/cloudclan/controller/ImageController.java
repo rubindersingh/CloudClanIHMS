@@ -4,6 +4,7 @@ package com.asu.cloudclan.controller;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
@@ -12,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.asu.cloudclan.service.ImageService;
 import com.asu.cloudclan.vo.TransformationVO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,23 +59,32 @@ public class ImageController {
 		    return "";
 		}
 	}*/
-	
+
 	@RequestMapping(value = "/images/{state}/{containerId}/**", method = RequestMethod.GET)
-	public String getImage(HttpServletResponse response, TransformationVO transformationVO, @PathVariable("containerId")String containerId, @PathVariable("state")String state, HttpServletRequest request) {
-			String fullPath = (String)request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-			String prefix = (String ) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
-		    AntPathMatcher antPathMatcher = new AntPathMatcher();
-		    String imageUrl = antPathMatcher.extractPathWithinPattern(prefix, fullPath);
-		    System.out.println(containerId);	
-		    System.out.println(state);
-			imageService.getImage(containerId, state, imageUrl, transformationVO);
-			/*System.out.println(transformationVO.getHeight());
-			System.out.println(transformationVO.getWidth());
-			System.out.println(transformationVO.getFilter());
-			System.out.println(transformationVO.getGravity());
-			System.out.println(transformationVO.getOpacity());
-			System.out.println(transformationVO.getRadius());*/
-			return "done";
+	public String getImage(HttpServletResponse response, TransformationVO transformationVO, @PathVariable("containerId") String containerId, @PathVariable("state") String state, HttpServletRequest request) throws IOException {
+		String fullPath = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+		String prefix = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
+		AntPathMatcher antPathMatcher = new AntPathMatcher();
+		String imageUrl = antPathMatcher.extractPathWithinPattern(prefix, fullPath);
+		System.out.println(containerId);
+		System.out.println(state);
+		try {
+			InputStream inputStream = imageService.getImage(containerId, state, imageUrl, transformationVO);
+			if(inputStream != null) {
+				response.setContentType("image/jpg");
+				byte[] bytes = IOUtils.toByteArray(inputStream);
+				ServletOutputStream responseOutputStream = response.getOutputStream();
+				responseOutputStream.write(bytes);
+				responseOutputStream.flush();
+				responseOutputStream.close();
+			} else {
+				response.setContentType("application/json");
+				return new ObjectMapper().writeValueAsString(transformationVO.errorVOs);
+			}
+		} catch (Exception e) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+		}
+		return "";
 	}
-	
 }
+

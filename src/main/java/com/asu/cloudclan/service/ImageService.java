@@ -10,6 +10,7 @@ import com.asu.cloudclan.enums.ImageFormat;
 import com.asu.cloudclan.service.cassandra.ContainerCoreService;
 import com.asu.cloudclan.service.cassandra.ImageCoreService;
 import com.asu.cloudclan.service.cassandra.UserService;
+import com.asu.cloudclan.service.core.CoreTransformationService;
 import com.asu.cloudclan.service.rabbitmq.RabbitMQSenderService;
 import com.asu.cloudclan.service.swift.SwiftStorageService;
 import com.asu.cloudclan.util.JsonUtil;
@@ -24,6 +25,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +47,8 @@ public class ImageService {
     private RabbitMQSenderService rabbitMQSenderService;
     /*@Autowired
     SwiftStorageService swiftStorageService;*/
+    @Autowired
+    CoreTransformationService coreTransformationService;
 
     public InputStream getImage(String containerId, String state, String imageUrl, TransformationVO transformationVO) {
 
@@ -69,6 +73,13 @@ public class ImageService {
             }
             String objectId = null;
             //Look up for container+URL+transformation in redis first else proceed to next lines
+            // If not found, first validate transformation
+            if(!transformationVO.validateAndConvert()) {
+                ErrorVO errorVO = new ErrorVO(messageSource.getMessage("invalid.image.op.params",null,null));
+                errorVOs.add(errorVO);
+                transformationVO.errorVOs = errorVOs;
+                return null;
+            }
             Image image = imageCoreService.get(containerId, urlWithoutExt);
             Map<String, ImageMetadata> metadataMap = image.getMetadataMap();
             boolean doTransformation = false;
@@ -82,13 +93,15 @@ public class ImageService {
             } else {
                 objectId = metadataMap.get(transformation).getObjectId();
             }
-            InputStream inputStream = null;//swiftStorageService.downloadObject(objectId);
+            InputStream inputStream = new FileInputStream("/opt/jpg/101100.jpg");//swiftStorageService.downloadObject(objectId);
             ImageMetadataVO imageMetadataVO = new ImageMetadataVO();
             imageMetadataVO.setContainerId(containerId);
             imageMetadataVO.setUrl(urlWithoutExt);
             imageMetadataVO.setDownloadSize(100l); //TODO change size
             if(!noTransformation && doTransformation) {
                 //Run required transform here and return
+                inputStream = coreTransformationService.transform(inputStream, transformationVO);
+
 
                 imageMetadataVO.setTransformation(transformation);
                 imageMetadataVO.setTransformed(true);
@@ -106,6 +119,7 @@ public class ImageService {
             ErrorVO errorVO = new ErrorVO(messageSource.getMessage("server.error",null,null));
             List<ErrorVO> errorVOs = new ArrayList<>(1);
             errorVOs.add(errorVO);
+            transformationVO.errorVOs = errorVOs;
             return null;
         }
     }

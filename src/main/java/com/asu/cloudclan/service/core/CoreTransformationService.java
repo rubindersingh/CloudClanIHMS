@@ -1,5 +1,7 @@
 package com.asu.cloudclan.service.core;
 
+import com.asu.cloudclan.vo.FinalTransformationVO;
+import com.asu.cloudclan.vo.TransformationVO;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -11,6 +13,11 @@ import java.io.InputStream;
 public class CoreTransformationService {
 
     public void optimize(InputStream inputStream) {
-       //Mock implementation
+        inputStream = new ScalaTransformationService().optimize(inputStream);
+    }
+
+    public InputStream transform(InputStream inputStream, TransformationVO transformationVO) {
+        FinalTransformationVO finalTransformationVO = new FinalTransformationVO();
+        return new ScalaTransformationService().transform(inputStream, transformationVO.finalTransformationVO);
     }
 }
