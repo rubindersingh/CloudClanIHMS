@@ -1,5 +1,7 @@
 package com.asu.cloudclan.service.rabbitmq;
 
+import com.asu.cloudclan.vo.ImageMetadataVO;
+import com.asu.cloudclan.vo.UploadVO;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +15,12 @@ public class RabbitMQSenderService {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    public void send() {
-        rabbitTemplate.convertAndSend("worker","cloudclan","Hello to other world");
+    public void sendUploadInfo(UploadVO uploadVO) {
+        rabbitTemplate.convertAndSend("worker", "upload", uploadVO);
     }
+
+    public void sendDownloadInfo(ImageMetadataVO imageMetadataVO) {
+        rabbitTemplate.convertAndSend("worker", "download", imageMetadataVO);
+    }
+
 }

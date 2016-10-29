@@ -14,24 +14,31 @@ import java.util.Map;
 @Table(name = "image", keyspace = "cloudclan")
 public class Image
 {
-    @PartitionKey
-    @Column(name = "url")
-    private String url;
+    @PartitionKey(0)
     @Column(name = "container_id")
     private String containerId;
-    @Column(name = "total_size")
+    @PartitionKey(1)
+    @Column(name = "url")
+    private String url;
+/*    @Column(name = "total_size")
     private Integer totalSize;
     @Column(name = "total_trans")
-    private Integer totalTrans;
+    private Integer totalTrans;*/
     @Column(name = "metadata")
     @FrozenValue
     private Map<String, ImageMetadata> metadataMap;
 
-    public Image(String url, String containerId, Integer totalSize, Integer totalTrans, Map<String, ImageMetadata> metadataMap) {
+/*    public Image(String url, String containerId, Integer totalSize, Integer totalTrans, Map<String, ImageMetadata> metadataMap) {
         this.url = url;
         this.containerId = containerId;
         this.totalSize = totalSize;
         this.totalTrans = totalTrans;
+        this.metadataMap = metadataMap;
+    }*/
+
+    public Image(String containerId, String url, Map<String, ImageMetadata> metadataMap) {
+        this.url = url;
+        this.containerId = containerId;
         this.metadataMap = metadataMap;
     }
 
@@ -52,14 +59,6 @@ public class Image
 
     public void setContainerId(String containerId) {
         this.containerId = containerId;
-    }
-
-    public Integer getTotalSize() {
-        return totalSize;
-    }
-
-    public void setTotalSize(Integer totalSize) {
-        this.totalSize = totalSize;
     }
 
     public Map<String, ImageMetadata> getMetadataMap() {

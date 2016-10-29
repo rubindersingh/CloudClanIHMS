@@ -1,10 +1,9 @@
 package com.asu.cloudclan.controller;
 
+import com.asu.cloudclan.entity.cassandra.User;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class HelloController {
@@ -21,8 +20,22 @@ public class HelloController {
         return "Greetings from Spring Boot!";
     }
 
-    @RequestMapping(value="/login1", method = RequestMethod.POST)
+    /*@RequestMapping(value="/login1", method = RequestMethod.POST)
     public String login(){
         return "Data saved in db";
+    }*/
+
+/*
+    @GetMapping("/login1")
+    public String signUpForm(Model model) {
+        model.addAttribute("signupUser", new SignupUser());
+        return "Sign up User";
     }
+
+    @PostMapping("/login1")
+    public String signUpSubmit(@ModelAttribute SignupUser signupUser) {
+        return "User signed up";
+    }
+*/
+
 }

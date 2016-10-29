@@ -25,8 +25,10 @@ public class CassandraSessionService {
     private Cluster cluster;
     private MappingManager manager;
 
-    public PreparedStatement CREATE_CONTAINER;
-    public PreparedStatement MAP_CONTAINER;
+    private PreparedStatement CREATE_CONTAINER;
+    private PreparedStatement MAP_CONTAINER;
+    private PreparedStatement SAVE_IMAGE;
+    private PreparedStatement SAVE_TRANSFORMATION;
 
     @Autowired
     public CassandraSessionService(Environment env) {
@@ -39,8 +41,11 @@ public class CassandraSessionService {
         manager = new MappingManager(session);
 
         //Intializing prepared statements
-        CREATE_CONTAINER = session.prepare("INSERT INTO container (id, type) VALUES (?, ?) IF NOT EXISTS");
-        MAP_CONTAINER = session.prepare("INSERT INTO container_user (container_id, email_id, r_email_id, access_type) VALUES (?, ?, ?, ?)");
+        CREATE_CONTAINER = session.prepare("INSERT INTO container (id, name, type) VALUES (?, ?, ?) IF NOT EXISTS");
+        MAP_CONTAINER = session.prepare("INSERT INTO user_container (email_id, container_id, r_container_id, access_type) VALUES (?, ?, ?, ?)");
+
+        SAVE_IMAGE = session.prepare("INSERT INTO image (container_id, url, metadata) VALUES (?, ?, ?)");
+        SAVE_TRANSFORMATION = session.prepare("UPDATE image SET metadata = metadata + ? WHERE container_id = ? AND url=?");
     }
 
     public MappingManager getManager() {
@@ -49,5 +54,21 @@ public class CassandraSessionService {
 
     public Session getSession() {
         return session;
+    }
+
+    public PreparedStatement getCreateContainerStatement() {
+        return CREATE_CONTAINER;
+    }
+
+    public PreparedStatement getMapContainerStatement() {
+        return MAP_CONTAINER;
+    }
+
+    public PreparedStatement getSaveImageStatement() {
+        return SAVE_IMAGE;
+    }
+
+    public PreparedStatement getSaveTransformationStatement() {
+        return SAVE_TRANSFORMATION;
     }
 }

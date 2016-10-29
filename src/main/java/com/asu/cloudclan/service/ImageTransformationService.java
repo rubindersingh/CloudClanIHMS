@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
-public class ImageTransforamtionService {
+public class ImageTransformationService {
 
 	public BufferedImage transform(Long transformId, MultipartFile file) {
 		BufferedImage output = null;

@@ -14,18 +14,24 @@ public class Container {
     @PartitionKey
     @Column(name = "id")
     private String id;
+    @Column(name = "name")
+    private String name;
     @Column(name = "type")
-    private ContainerType type;
+    private String type;
 
     /*Create container of specified type*/
-    public Container(String id, ContainerType type) {
+    public Container(String id, String name, String type) {
         this.id = id;
         this.type = type;
+        this.name = name;
     }
 
     /*Create public container*/
-    public Container(String id) {
-        this(id, ContainerType.PUBLIC);
+    public Container(String id, String name) {
+        this(id, name, ContainerType.PUBLIC.name());
+    }
+
+    public Container() {
     }
 
     public String getId() {
@@ -36,11 +42,19 @@ public class Container {
         this.id = id;
     }
 
-    public ContainerType getType() {
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getType() {
         return type;
     }
 
-    public void setType(ContainerType type) {
+    public void setType(String type) {
         this.type = type;
     }
 }

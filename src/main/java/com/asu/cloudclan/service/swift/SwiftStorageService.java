@@ -11,7 +11,7 @@ import java.util.UUID;
 /**
  * Created by rubinder on 10/4/16.
  */
-
+//@Service
 public class SwiftStorageService {
 
     @Autowired
@@ -19,6 +19,11 @@ public class SwiftStorageService {
 
     public String uploadObject(InputStream inputStream) {
         String objectId = UUID.randomUUID().toString();
+        swiftStorageCoreService.uploadObjectAync(objectId, inputStream);
+        return objectId;
+    }
+
+    public String uploadObject(String objectId, InputStream inputStream) {
         swiftStorageCoreService.uploadObjectAync(objectId, inputStream);
         return objectId;
     }

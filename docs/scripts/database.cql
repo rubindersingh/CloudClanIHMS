@@ -10,23 +10,30 @@ last_name text
 
 CREATE TABLE container(
 id text PRIMARY KEY,
+name text,
 type text
 );
 
-CREATE TABLE container_user(
-container_id text,
+CREATE TABLE user_container(
 email_id text,
-r_email_id text,
+container_id text,
+r_container_id text,
 access_type text,
-PRIMARY KEY(container_id, email_id)
+PRIMARY KEY(email_id, container_id)
 );
-CREATE INDEX container_user_r_email_id_idx ON container_user (r_email_id);
-
+CREATE INDEX user_container_r_container_id_idx ON user_container (r_container_id);
 
 CREATE TYPE image_metadata(
 object_id text,
 width int,
 height int,
+size int,
+transformation text,
+type text
+);
+
+CREATE TYPE image_metadata(
+object_id text,
 size int,
 transformation text,
 type text

@@ -19,7 +19,7 @@ import org.springframework.core.env.Environment;
 /**
  * Created by rubinder on 10/3/16.
  */
-
+//@Configuration
 public class SwiftStorageConfiguration {
 
     @Autowired

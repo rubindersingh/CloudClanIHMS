@@ -1,14 +1,21 @@
 package com.asu.cloudclan.app.conf;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.MapPropertySource;
 import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by rubinder on 10/3/16.
@@ -17,10 +24,14 @@ import org.springframework.data.redis.core.RedisTemplate;
 @EnableCaching
 public class RedisCacheConfiguration extends CachingConfigurerSupport {
 
+
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() {
+        /*List<String> nodes = new ArrayList<>();
+        nodes.add("localhost:6379");
+        nodes.add("192.168.1.5:6379");
+        JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(new RedisClusterConfiguration(nodes));*/
         JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
-        jedisConnectionFactory.setHostName("127.0.0.1");
         return jedisConnectionFactory;
     }
 

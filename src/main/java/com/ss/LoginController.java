@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LoginController {
 
-    @RequestMapping("/myrest")
+    @RequestMapping("image/myrest")
     public String index(Model model) {
         return "hello hello";
     }

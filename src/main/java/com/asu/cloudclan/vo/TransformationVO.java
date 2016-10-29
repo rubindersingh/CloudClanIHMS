@@ -1,6 +1,8 @@
 package com.asu.cloudclan.vo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.ser.std.StdArraySerializers;
 
 /**

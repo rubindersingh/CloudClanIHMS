@@ -2,10 +2,8 @@ package com.asu.cloudclan.service.cassandra;
 
 import com.asu.cloudclan.entity.cassandra.Image;
 import com.asu.cloudclan.entity.cassandra.ImageMetadata;
-import com.asu.cloudclan.entity.cassandra.User;
-import com.asu.cloudclan.enums.AccessType;
-import com.asu.cloudclan.enums.ContainerType;
-import com.asu.cloudclan.service.util.ContainerGeneratorUtilService;
+import com.asu.cloudclan.vo.ImageMetadataVO;
+import com.asu.cloudclan.vo.UploadVO;
 import com.datastax.driver.core.*;
 import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.MappingManager;
@@ -13,17 +11,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.data.crossstore.HashMapChangeSet;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by rubinder on 10/2/16.
  */
 @Service
-public class ImageService {
+public class ImageCoreService {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -32,14 +30,40 @@ public class ImageService {
     @Autowired
     CassandraSessionService cassandraSessionService;
 
+    public void saveUploadInfo(UploadVO uploadVO) {
+        String containerId = uploadVO.getContainerId();
+        List<ImageMetadataVO> imageMetadataVOs = uploadVO.getImageMetadataVOs();
+        for (ImageMetadataVO imageMetadataVO : imageMetadataVOs) {
+            ImageMetadata imageMetadata = new ImageMetadata(imageMetadataVO.getObjectId(),imageMetadataVO.getStoredSize().intValue(),
+                    imageMetadataVO.getTransformation(), imageMetadataVO.getType());
+            Map<String, ImageMetadata> map = new HashMap<>();
+            map.put(imageMetadata.getTransformation(), imageMetadata);
+            Session session = cassandraSessionService.getSession();
+            ResultSet resultSet = session.execute(cassandraSessionService.getSaveImageStatement().bind(containerId, imageMetadataVO.getUrl(), map));
+        }
+    }
+
+    public void saveDownloadInfo(ImageMetadataVO imageMetadataVO) {
+        if(imageMetadataVO.getObjectId() != null) {
+            ImageMetadata imageMetadata = new ImageMetadata(imageMetadataVO.getObjectId(),imageMetadataVO.getStoredSize().intValue(),
+                    imageMetadataVO.getTransformation(), imageMetadataVO.getType());
+            Map<String, ImageMetadata> map = new HashMap<>();
+            map.put(imageMetadata.getTransformation(), imageMetadata);
+            Session session = cassandraSessionService.getSession();
+            ResultSet resultSet = session.execute(cassandraSessionService.getSaveTransformationStatement().bind(map, imageMetadataVO.getContainerId(), imageMetadataVO.getUrl()));
+        } else {
+            //TODO save downloading charges
+        }
+    }
+
     public void save(Image image) {
         Mapper<Image> imageMapper = cassandraSessionService.getManager().mapper(Image.class);
         imageMapper.save(image);
     }
 
-    public Image get(String url) {
+    public Image get(String container, String url) {
         Mapper<Image> imageMapper = cassandraSessionService.getManager().mapper(Image.class);
-        return imageMapper.get(url);
+        return imageMapper.get(container, url);
     }
 
     public void addTransformation(String url, ImageMetadata imageMetadata) {
