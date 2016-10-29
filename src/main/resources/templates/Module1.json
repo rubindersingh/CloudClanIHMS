@@ -1,0 +1,12 @@
+{
+  "products":[
+    {
+    "name": "Levis Blue Denim",
+    "imgPath": "heart.png"
+    },
+    {
+    "name": "Pepe Black Jeans",
+    "imgPath": "folder.jpg"
+    }
+  ]
+}

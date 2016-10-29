@@ -1,0 +1,17 @@
+{
+  "Caption": "Module caption",
+  "Buttons": [
+    {
+      "TText": "google",
+      "JavaScriptAction": "alert('google')"
+    },
+    {
+      "TText": "microsoft",
+      "JavaScriptAction": "alert('microsoft')"
+    },
+    {
+      "TText": "yahoo",
+      "JavaScriptAction": "alert('yahoo')"
+    }
+  ]
+}
