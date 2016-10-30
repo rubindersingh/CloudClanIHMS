@@ -1,192 +1,96 @@
-
-<!--
- * Copyright (c) 2010 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * Author: Eric Bidelman <e.bidelman@chromium.org>
--->
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
-    <meta charset=utf-8 />
-    <link rel="stylesheet" type="text/css" href="enhanced.css" />
-    <!--<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Molengo|Josefin+Sans+Std+Light" />-->
-    <style>
-        html, body {
-            padding: 0;
-            margin: 0;
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-        }
-        .linear {
-            background: -webkit-gradient(linear, left bottom, left top,
-            from(#eee), color-stop(0.25, #fff),
-            to(#eee), color-stop(0.75, #fff));
-        }
-        .shadow {
-            -moz-box-shadow: 3px 3px 10px #666666;
-            -webkit-box-shadow: 3px 3px 10px #666666;
-            box-shadow: 3px 3px 10px #666666;
-        }
-        .center {
-            display : -webkit-box;
-            display : -moz-box;
-            display : box;
-            -webkit-box-orient : vertical;
-            -webkit-box-pack : center;
-            -webkit-box-align : center;
-            -moz-box-orient : vertical;
-            -moz-box-pack : center;
-            -moz-box-align : center;
-            box-orient: vertical;
-            box-pack: center;
-            box-align: center;
-        }
-        ::-webkit-scrollbar {
-            width: 5px;
-            height: 5px;
-            background-color: #eee;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background-color: rgba(0,0,0, 0.4);
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background-color: rgba(0,0,0, 0.6);
-        }
-        input[type='file'] {
-            border: 2px solid #eee;
-            border-radius: 10px;
-            padding: 8px;
-            width: 93%;
-        }
-        #container {
-            display: -webkit-box;
-            -webkit-box-orient: horizontal;
-            height: 100%;
-        }
-        #container > div {
-            padding: 10px;
-        }
-        #container > div:first-of-type {
-            overflow-y: auto;
-            overflow-x: hidden;
-            width: 300px;
-            border-right: 1px solid #ccc;
-        }
-        #container > div:last-of-type {
-            overflow-y: auto;
-            overflow-x: hidden;
-            -webkit-box-flex: 1;
-        }
-        #thumbnails {
-            background: -webkit-gradient(linear, left bottom, left top,
-            from(#ccc), color-stop(0.25, #eee),
-            to(#ccc), color-stop(0.75, #eee));
-            -webkit-box-shadow: inset 0 0 15px #000;
-        }
-        .thumbnail {
-            /*float:left;*/
-            text-align: center;
-            margin-left: 10px;
-            width: 450px;
-            -webkit-transition-property: opacity, -webkit-transform;
-            -webkit-transition-duration: 0.6s, 0.2s;
-            -webkit-transition-timing-function: ease-in-out;
-            opacity: 0;
-        }
-        .thumbnail:hover {
-            -webkit-transform: scale(1.5);
-        }
-        .thumbnail .image {
-            border: 1px solid #ccc;
-            padding: 10px;
-            background-color: #fff;
-        }
-        .thumbnail .title {
-            margin-bottom: 5px;
-            font-family: Helvetica, sans-serif;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            width: 300px;
-            margin: 5px auto;
-        }
-        #thumbnails img {
-            border: 1px solid #ccc;
-            width: 100%;
-        }
-        .thumbnail .details {
-            font-family: Helvetica, sans-serif;
-            font-size: 10pt;
-        }
-        #progress_bar {
-            display: none;
-        }
-        progress {
-            background-color: black;
-            margin: 10px 0;
-            padding: 1px;
-            border: 1px solid #000;
-            font-size: 14px;
-            width: auto;
-        }
-        progress::-webkit-progress-bar-value {
-            background-color: #99ccff;
-        }
-    </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <title>Hello World!</title>
+    <link href="dialog.css" rel="stylesheet"> <!-- Including CSS File Here-->
+    <!-- Including CSS & jQuery Dialog UI Here-->
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/ui-darkness/jquery-ui.css" rel="stylesheet">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+    <script src="dialog.js" type="text/javascript"></script>
 </head>
 <body>
+<div class="container1">
+    <div class="user_info">
+        <h1>User Information</h1>
+        <h2>Username:</h2>
+    </div>
+    <div style=" width:50%;">
+        <table class="user_details">
+            <tr>
+                <td>Total Folders</td>
+                <td>Total Folders</td>
+            </tr>
+            <tr>
 
-<div id="container">
-    <div>
-        <input type="file" id="file_input" webkitdirectory directory />
+                <td>Total Images</td>
+                <td>Total Folders</td>
+            </tr>
+            <tr>
+                <td>Total Size</td>
+                <td>Total Folders</td>
+            </tr>
+            <tr>
+                <td>Total Bandwidth</td>
+                <td>Total Folders</td>
+            </tr>
+            <tr>
+                <td>Total </td>
+                <td>Total Folders</td>
+            </tr>
+        </table>
     </div>
 </div>
-<script>
-    // Simple JavaScript Templating
-    // John Resig - http://ejohn.org/ - MIT Licensed
-    $(function() {
-        function callme(e) {
-            var data = new FormData();
-            data.append('containerId', 'aaaa');
-            $.each(e.target.files, function(i, file) {
-                data.append('files', file);
-            });
-            $.ajax({
-                url: '/images/',
-                data: data,
-                cache: false,
-                contentType: false,
-                processData: false,
-                type: 'POST',
-                success: function(data){
-                    alert('Done');
-                    console.log(data);
-                }
-            });
-            /* fileList = e.target.files;
-             for (var i = 0, file; file = fileList[i]; ++i) {
-             alert(file.webkitRelativePath);
-             } */
-        }
-        $('#file_input').change(callme);
-    });
-</script>
+
+<div class="container2">
+    <div>
+    <ul class="create">
+        <li>
+                <a id="create_folder" >Create Folder</a>
+        </li>
+    </ul>
+    </div>
+    <div class="container" style="display:none">
+        <div id="dialog" title="Container Name">
+            <form action="" method="post">
+                <label>Title:</label>
+                <input id="name" name="name" type="text">
+                <input id="submit" type="submit" value="Submit">
+            </form>
+        </div>
+    </div>
+    <div id="container_module">
+        <ul id='ulObj'>
+        <!--<li>1</li>-->
+        </ul>
+    </div>
+
+    <div id="display_module" style="display: none">
+        <div>
+        <!--Bread crumb-->
+        <p id="current_container"><a id="back_to_container" href="javascript: console.log('href fired');">Home Page</a> > </p>
+        </div>
+        <div>
+        <!--Upload images & folder-->
+            <div id="container">
+                <div>
+                <input type="file" id="file_input1" webkitdirectory directory />
+                </div>
+                <div>
+                <input type="file" id="file_input2" />
+                </div>
+            </div>
+        </div>
+        <div>
+        <!--Display images-->
+            <div>
+             <ul id='aaa'>
+                <!--<li>1</li>-->
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
