@@ -33,33 +33,6 @@ public class ImageController {
 	@Autowired
 	ImageService imageService;
 
-/*	@RequestMapping(value="/transform/{transformId}", method=RequestMethod.POST)
-	public String transform(HttpServletResponse response, @PathVariable("transformId") Long transformId, @RequestParam("file") MultipartFile file) throws IOException {
-		BufferedImage output = imageTransformationService.transform(transformId, file);
-		if(output==null) {
-			return "Oops, Something went wrong!!!";
-		} else {
-			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-		    try {
-		      ImageIO.write(output, "jpg", outputStream);
-		      byte[] imgByte = outputStream.toByteArray();
-
-			  response.setHeader("Cache-Control", "no-store");
-			  response.setHeader("Pragma", "no-cache");
-			  response.setDateHeader("Expires", 0);
-			  response.setContentType("image/jpg");
-			  ServletOutputStream responseOutputStream = response.getOutputStream();
-			  responseOutputStream.write(imgByte);
-			  responseOutputStream.flush();
-			  responseOutputStream.close();
-		    } catch (Exception e) {
-		      response.sendError(HttpServletResponse.SC_NOT_FOUND);
-		    }
-		    return "";
-		}
-	}*/
-
 	@RequestMapping(value = "/images/{state}/{containerId}/**", method = RequestMethod.GET)
 	public String getImage(HttpServletResponse response, TransformationVO transformationVO, @PathVariable("containerId") String containerId, @PathVariable("state") String state, HttpServletRequest request) throws IOException {
 		String fullPath = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);

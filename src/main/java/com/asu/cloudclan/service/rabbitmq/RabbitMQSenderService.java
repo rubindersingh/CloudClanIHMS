@@ -16,11 +16,11 @@ public class RabbitMQSenderService {
     private RabbitTemplate rabbitTemplate;
 
     public void sendUploadInfo(UploadVO uploadVO) {
-        rabbitTemplate.convertAndSend("worker", "upload", uploadVO);
+        rabbitTemplate.convertAndSend("upload", "upload", uploadVO);
     }
 
     public void sendDownloadInfo(ImageMetadataVO imageMetadataVO) {
-        rabbitTemplate.convertAndSend("worker", "download", imageMetadataVO);
+        rabbitTemplate.convertAndSend("download", "download", imageMetadataVO);
     }
 
 }

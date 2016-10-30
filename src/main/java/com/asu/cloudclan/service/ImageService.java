@@ -12,6 +12,7 @@ import com.asu.cloudclan.service.cassandra.ImageCoreService;
 import com.asu.cloudclan.service.cassandra.UserService;
 import com.asu.cloudclan.service.core.CoreTransformationService;
 import com.asu.cloudclan.service.rabbitmq.RabbitMQSenderService;
+import com.asu.cloudclan.service.redis.RedisCacheStoreService;
 import com.asu.cloudclan.service.swift.SwiftStorageService;
 import com.asu.cloudclan.util.JsonUtil;
 import com.asu.cloudclan.vo.ContainerVO;
@@ -21,6 +22,9 @@ import com.asu.cloudclan.vo.TransformationVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -49,9 +53,10 @@ public class ImageService {
     SwiftStorageService swiftStorageService;*/
     @Autowired
     CoreTransformationService coreTransformationService;
+    @Autowired
+    RedisCacheStoreService redisCacheStoreService;
 
     public InputStream getImage(String containerId, String state, String imageUrl, TransformationVO transformationVO) {
-
         try {
             List<ErrorVO> errorVOs = new ArrayList<>();
             int dotLastIndex = imageUrl.lastIndexOf(".");
@@ -65,34 +70,47 @@ public class ImageService {
             } else {
                 urlWithoutExt = imageUrl;
             }
-            String transformation = JsonUtil.getJsonString(transformationVO);
+
+            String transformation = transformationVO.toString();
             boolean noTransformation = false;
-            if(transformation.length() == 2) {
+            if(transformation.length() == 0) {
                 transformation = "";
                 noTransformation = true;
             }
-            String objectId = null;
+
             //Look up for container+URL+transformation in redis first else proceed to next lines
             // If not found, first validate transformation
-            if(!transformationVO.validateAndConvert()) {
-                ErrorVO errorVO = new ErrorVO(messageSource.getMessage("invalid.image.op.params",null,null));
-                errorVOs.add(errorVO);
-                transformationVO.errorVOs = errorVOs;
-                return null;
-            }
-            Image image = imageCoreService.get(containerId, urlWithoutExt);
-            Map<String, ImageMetadata> metadataMap = image.getMetadataMap();
+            String objectId = redisCacheStoreService.lookupImageObjectId(containerId+urlWithoutExt+transformation);
             boolean doTransformation = false;
-            if(noTransformation || !metadataMap.containsKey(transformation)) {
-                if(metadataMap.containsKey("OPTIMIZED")) {
-                    objectId = metadataMap.get("OPTIMIZED").getObjectId();
-                } else {
-                    objectId = metadataMap.get("ORIGINAL").getObjectId();
+            if(objectId == null) {
+                if(!transformationVO.validateAndConvert()) {
+                    ErrorVO errorVO = new ErrorVO(messageSource.getMessage("invalid.image.op.params",null,null));
+                    errorVOs.add(errorVO);
+                    transformationVO.errorVOs = errorVOs;
+                    return null;
                 }
-                doTransformation = true;
-            } else {
-                objectId = metadataMap.get(transformation).getObjectId();
+                Image image = imageCoreService.get(containerId, urlWithoutExt);
+                if(image == null) {
+                    ErrorVO errorVO = new ErrorVO(messageSource.getMessage("invalid.image.url",null,null));
+                    errorVOs.add(errorVO);
+                    transformationVO.errorVOs = errorVOs;
+                    return null;
+                }
+                Map<String, ImageMetadata> metadataMap = image.getMetadataMap();
+
+                if(noTransformation || !metadataMap.containsKey(transformation)) {
+                    if(metadataMap.containsKey("OPTIMIZED")) {
+                        objectId = metadataMap.get("OPTIMIZED").getObjectId();
+                    } else {
+                        objectId = metadataMap.get("ORIGINAL").getObjectId();
+                    }
+                    doTransformation = true;
+                } else {
+                    objectId = metadataMap.get(transformation).getObjectId();
+                    redisCacheStoreService.saveImageObjectId(containerId+urlWithoutExt+transformation, objectId);
+                }
             }
+
             InputStream inputStream = new FileInputStream("/opt/jpg/101100.jpg");//swiftStorageService.downloadObject(objectId);
             ImageMetadataVO imageMetadataVO = new ImageMetadataVO();
             imageMetadataVO.setContainerId(containerId);
@@ -102,7 +120,6 @@ public class ImageService {
                 //Run required transform here and return
                 inputStream = coreTransformationService.transform(inputStream, transformationVO);
 
-
                 imageMetadataVO.setTransformation(transformation);
                 imageMetadataVO.setTransformed(true);
                 if(state.equals("p")) {
@@ -110,6 +127,7 @@ public class ImageService {
                     imageMetadataVO.setObjectId(containerId+urlWithoutExt+transformation);
                     imageMetadataVO.setType(ImageFormat.JPG.name());
                     //swiftStorageService.uploadObject(containerId+urlWithoutExt+transformation, inputStream);
+                    redisCacheStoreService.saveImageObjectId(containerId+urlWithoutExt+transformation, containerId+urlWithoutExt+transformation);
                 }
             }
             rabbitMQSenderService.sendDownloadInfo(imageMetadataVO);

@@ -112,6 +112,52 @@ public class TransformationVO {
         this.scale = scale;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        if(w!=null) {
+            stringBuilder.append("_w_");
+            stringBuilder.append(w);
+        }
+        if(h!=null) {
+            stringBuilder.append("_h_");
+            stringBuilder.append(h);
+        }
+        if(op!=null) {
+            stringBuilder.append("_op_");
+            stringBuilder.append(op);
+        }
+        if(pad!=null) {
+            stringBuilder.append("_pad_");
+            stringBuilder.append(pad);
+        }
+        if(pad_c!=null) {
+            stringBuilder.append("_pad_c_");
+            stringBuilder.append(pad_c);
+        }
+        if(fit_c!=null) {
+            stringBuilder.append("_fit_c_");
+            stringBuilder.append(fit_c);
+        }
+        if(fltr!=null) {
+            stringBuilder.append("_fltr_");
+            stringBuilder.append(fltr);
+        }
+        if(flip!=null) {
+            stringBuilder.append("_flip_");
+            stringBuilder.append(flip);
+        }
+        if(rot!=null) {
+            stringBuilder.append("_rot_");
+            stringBuilder.append(rot);
+        }
+        if(scale!=null) {
+            stringBuilder.append("_scale_");
+            stringBuilder.append(scale);
+        }
+        return stringBuilder.toString();
+    }
+
     public boolean validateAndConvert() {
         try {
             finalTransformationVO = new FinalTransformationVO();
