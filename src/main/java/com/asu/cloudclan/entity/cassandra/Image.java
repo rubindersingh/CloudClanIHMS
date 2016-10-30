@@ -20,23 +20,11 @@ public class Image
     @PartitionKey(1)
     @Column(name = "url")
     private String url;
-/*    @Column(name = "total_size")
-    private Integer totalSize;
-    @Column(name = "total_trans")
-    private Integer totalTrans;*/
     @Column(name = "metadata")
     @FrozenValue
-    private Map<String, ImageMetadata> metadataMap;
+    private Map<String, String> metadataMap;
 
-/*    public Image(String url, String containerId, Integer totalSize, Integer totalTrans, Map<String, ImageMetadata> metadataMap) {
-        this.url = url;
-        this.containerId = containerId;
-        this.totalSize = totalSize;
-        this.totalTrans = totalTrans;
-        this.metadataMap = metadataMap;
-    }*/
-
-    public Image(String containerId, String url, Map<String, ImageMetadata> metadataMap) {
+    public Image(String containerId, String url, Map<String, String> metadataMap) {
         this.url = url;
         this.containerId = containerId;
         this.metadataMap = metadataMap;
@@ -61,11 +49,11 @@ public class Image
         this.containerId = containerId;
     }
 
-    public Map<String, ImageMetadata> getMetadataMap() {
+    public Map<String, String> getMetadataMap() {
         return metadataMap;
     }
 
-    public void setMetadataMap(Map<String, ImageMetadata> metadataMap) {
+    public void setMetadataMap(Map<String, String> metadataMap) {
         this.metadataMap = metadataMap;
     }
 }

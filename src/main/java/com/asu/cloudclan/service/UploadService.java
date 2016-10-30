@@ -63,7 +63,7 @@ public class UploadService {
 
                     ImageMetadataVO imageMetadataVO = new ImageMetadataVO();
                     try {
-                        imageMetadataVO.setUploadedSize(multipartFile.getSize());
+                        imageMetadataVO.setUploadedSize((int) multipartFile.getSize());
                         String fullName = multipartFile.getOriginalFilename();
                         int dotLastIndex = fullName.lastIndexOf(".");
                         String extension = fullName.substring(dotLastIndex+1);
@@ -72,10 +72,11 @@ public class UploadService {
                             imageMetadataVO.setTransformation("ORIGINAL");
                             InputStream inputStream = multipartFile.getInputStream();
                             if(!uploadVO.getKeepOriginal()) {
-                                coreTransformationService.optimize(inputStream);
+                                inputStream = coreTransformationService.optimize(inputStream);
                                 imageMetadataVO.setTransformation("OPTIMIZED");
+                                imageMetadataVO.setTransformed(1);
                             }
-                            imageMetadataVO.setStoredSize((long) inputStream.available());
+                            imageMetadataVO.setStoredSize((int) inputStream.available());
                             //swiftStorageService.uploadObject(uploadVO.getContainerId()+imageVO.getUrl(), inputStream);
                             String url = fullName.substring(0,dotLastIndex);
                             imageMetadataVO.setObjectId(uploadVO.getContainerId()+url);

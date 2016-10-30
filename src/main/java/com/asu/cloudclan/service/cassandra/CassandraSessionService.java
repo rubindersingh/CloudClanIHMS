@@ -29,6 +29,8 @@ public class CassandraSessionService {
     private PreparedStatement MAP_CONTAINER;
     private PreparedStatement SAVE_IMAGE;
     private PreparedStatement SAVE_TRANSFORMATION;
+    private PreparedStatement SAVE_IMAGE_SERVICE_USE;
+    private PreparedStatement SAVE_IMAGE_STORAGE_USE;
 
     @Autowired
     public CassandraSessionService(Environment env) {
@@ -46,6 +48,9 @@ public class CassandraSessionService {
 
         SAVE_IMAGE = session.prepare("INSERT INTO image (container_id, url, metadata) VALUES (?, ?, ?)");
         SAVE_TRANSFORMATION = session.prepare("UPDATE image SET metadata = metadata + ? WHERE container_id = ? AND url=?");
+
+        SAVE_IMAGE_SERVICE_USE = session.prepare("INSERT INTO image_service_use (container_id, url, ts, trans, upload_size, download_size) VALUES (?, ?, ?, ?, ?, ?)");
+        SAVE_IMAGE_STORAGE_USE = session.prepare("INSERT INTO image_storage_use (container_id, url, transformation, size, ts) VALUES (?, ?, ?, ?, ?)");
     }
 
     public MappingManager getManager() {
@@ -70,5 +75,13 @@ public class CassandraSessionService {
 
     public PreparedStatement getSaveTransformationStatement() {
         return SAVE_TRANSFORMATION;
+    }
+
+    public PreparedStatement getSaveImageServiceUseStatement() {
+        return SAVE_IMAGE_SERVICE_USE;
+    }
+
+    public PreparedStatement getSaveImageStorageUseStatement() {
+        return SAVE_IMAGE_STORAGE_USE;
     }
 }

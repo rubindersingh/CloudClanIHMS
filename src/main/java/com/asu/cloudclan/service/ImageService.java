@@ -1,39 +1,24 @@
 package com.asu.cloudclan.service;
 
 import com.asu.cloudclan.entity.cassandra.Image;
-import com.asu.cloudclan.entity.cassandra.ImageMetadata;
-import com.asu.cloudclan.entity.cassandra.User;
-import com.asu.cloudclan.entity.cassandra.UserContainer;
-import com.asu.cloudclan.enums.AccessType;
-import com.asu.cloudclan.enums.ContainerType;
 import com.asu.cloudclan.enums.ImageFormat;
-import com.asu.cloudclan.service.cassandra.ContainerCoreService;
 import com.asu.cloudclan.service.cassandra.ImageCoreService;
-import com.asu.cloudclan.service.cassandra.UserService;
 import com.asu.cloudclan.service.core.CoreTransformationService;
 import com.asu.cloudclan.service.rabbitmq.RabbitMQSenderService;
 import com.asu.cloudclan.service.redis.RedisCacheStoreService;
-import com.asu.cloudclan.service.swift.SwiftStorageService;
-import com.asu.cloudclan.util.JsonUtil;
-import com.asu.cloudclan.vo.ContainerVO;
 import com.asu.cloudclan.vo.ErrorVO;
 import com.asu.cloudclan.vo.ImageMetadataVO;
 import com.asu.cloudclan.vo.TransformationVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.context.MessageSource;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -96,17 +81,17 @@ public class ImageService {
                     transformationVO.errorVOs = errorVOs;
                     return null;
                 }
-                Map<String, ImageMetadata> metadataMap = image.getMetadataMap();
+                Map<String, String> metadataMap = image.getMetadataMap();
 
                 if(noTransformation || !metadataMap.containsKey(transformation)) {
                     if(metadataMap.containsKey("OPTIMIZED")) {
-                        objectId = metadataMap.get("OPTIMIZED").getObjectId();
+                        objectId = metadataMap.get("OPTIMIZED");
                     } else {
-                        objectId = metadataMap.get("ORIGINAL").getObjectId();
+                        objectId = metadataMap.get("ORIGINAL");
                     }
                     doTransformation = true;
                 } else {
-                    objectId = metadataMap.get(transformation).getObjectId();
+                    objectId = metadataMap.get(transformation);
                     redisCacheStoreService.saveImageObjectId(containerId+urlWithoutExt+transformation, objectId);
                 }
             }
@@ -115,15 +100,15 @@ public class ImageService {
             ImageMetadataVO imageMetadataVO = new ImageMetadataVO();
             imageMetadataVO.setContainerId(containerId);
             imageMetadataVO.setUrl(urlWithoutExt);
-            imageMetadataVO.setDownloadSize(100l); //TODO change size
+            imageMetadataVO.setDownloadSize(inputStream.available()); //TODO change size
             if(!noTransformation && doTransformation) {
                 //Run required transform here and return
                 inputStream = coreTransformationService.transform(inputStream, transformationVO);
 
                 imageMetadataVO.setTransformation(transformation);
-                imageMetadataVO.setTransformed(true);
+                imageMetadataVO.setTransformed(1);
                 if(state.equals("p")) {
-                    imageMetadataVO.setStoredSize((long) 100); //TODO change size
+                    imageMetadataVO.setStoredSize(inputStream.available()); //TODO change size
                     imageMetadataVO.setObjectId(containerId+urlWithoutExt+transformation);
                     imageMetadataVO.setType(ImageFormat.JPG.name());
                     //swiftStorageService.uploadObject(containerId+urlWithoutExt+transformation, inputStream);

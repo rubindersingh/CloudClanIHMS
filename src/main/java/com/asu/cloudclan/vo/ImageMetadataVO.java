@@ -6,12 +6,12 @@ package com.asu.cloudclan.vo;
 public class ImageMetadataVO {
     private String objectId;
     private String url;
-    private Long uploadedSize;
-    private Long storedSize;
-    private Long downloadSize;
+    private Integer uploadedSize;
+    private Integer storedSize;
+    private Integer downloadSize;
     private String type;
     private String transformation;
-    private Boolean transformed;
+    private Integer transformed;
     private String containerId;
 
     public String getObjectId() {
@@ -30,19 +30,19 @@ public class ImageMetadataVO {
         this.url = url;
     }
 
-    public Long getUploadedSize() {
+    public Integer getUploadedSize() {
         return uploadedSize;
     }
 
-    public void setUploadedSize(Long uploadedSize) {
+    public void setUploadedSize(Integer uploadedSize) {
         this.uploadedSize = uploadedSize;
     }
 
-    public Long getStoredSize() {
+    public Integer getStoredSize() {
         return storedSize;
     }
 
-    public void setStoredSize(Long storedSize) {
+    public void setStoredSize(Integer storedSize) {
         this.storedSize = storedSize;
     }
 
@@ -62,11 +62,11 @@ public class ImageMetadataVO {
         this.transformation = transformation;
     }
 
-    public Boolean getTransformed() {
+    public Integer getTransformed() {
         return transformed;
     }
 
-    public void setTransformed(Boolean transformed) {
+    public void setTransformed(Integer transformed) {
         this.transformed = transformed;
     }
 
@@ -78,11 +78,11 @@ public class ImageMetadataVO {
         this.containerId = containerId;
     }
 
-    public Long getDownloadSize() {
+    public Integer getDownloadSize() {
         return downloadSize;
     }
 
-    public void setDownloadSize(Long downloadSize) {
+    public void setDownloadSize(Integer downloadSize) {
         this.downloadSize = downloadSize;
     }
 }

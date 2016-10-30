@@ -12,8 +12,8 @@ import java.io.InputStream;
 @Service
 public class CoreTransformationService {
 
-    public void optimize(InputStream inputStream) {
-        inputStream = new ScalaTransformationService().optimize(inputStream);
+    public InputStream optimize(InputStream inputStream) {
+        return new ScalaTransformationService().optimize(inputStream);
     }
 
     public InputStream transform(InputStream inputStream, TransformationVO transformationVO) {

@@ -42,20 +42,33 @@ type text
 CREATE TABLE image(
 container_id text,
 url text,
-metadata map<text,frozen<image_metadata>>,
+metadata map<text,text>,
 PRIMARY KEY(container_id, url)
 );
 
-CREATE TABLE image_stats(
+CREATE TABLE image_service_use(
 container_id text,
 url text,
 ts uuid,
-size int,
 trans int,
 upload_size int,
 download_size int,
 PRIMARY KEY(container_id,url,ts)
 );
+
+CREATE TABLE image_storage_use(
+container_id text,
+url text,
+transformation text,
+size int,
+ts timeuuid,
+PRIMARY KEY(container_id,url,transformation)
+);
+
+Insert into image_storage_use(container_id,url,transformation,ts,size) values ('vhhkkjhj','/home/pic.jpg','OPTIMIZED',now(), 100000);
+Insert into image_storage_use(container_id,url,transformation,ts,size) values ('vhhkkjhj','/home/pic1.jpg','OPTIMIZED',now(), 100000);
+Insert into image_storage_use(container_id,url,transformation,ts,size) values ('vhhkkjhj','/home/pic2.jpg','OPTIMIZED',now(), 100000);
+
 
 CREATE INDEX image_stats_container_id_idx ON image_stats (container_id);
 CREATE INDEX image_stats_url_idx ON image_stats (url);
@@ -81,3 +94,36 @@ CREATE OR REPLACE AGGREGATE group_and_total(text, int)
 SFUNC state_group_and_total
 STYPE map<text, int>
 INITCOND {};
+
+select sum(size),sum(download_size),sum(trans),sum(upload_size) from image_stats where container_id='vhhkkjhj';
+
+
+
+
+CREATE OR REPLACE FUNCTION cost_function( state float, size int, ts timestamp)
+CALLED ON NULL INPUT
+RETURNS double
+LANGUAGE java AS '
+double amount = 0.001;
+if (state == null) state = amount*((new Date().getTime())-(ts.getTime()))*size; else state = state + amount*((new Date().getTime())-(ts.getTime()))*size; return state; ' ;
+
+
+CREATE OR REPLACE AGGREGATE totalcost(int, timestamp)
+SFUNC cost_function
+STYPE double;
+
+
+CREATE TABLE image_storage_use(
+container_id text,
+url text,
+transformation text,
+size int,
+ts timeuuid,
+PRIMARY KEY(container_id,url,transformation)
+);
+
+select totalcost(size, toTimestamp(ts)) from image_storage_use where container_id='vhhkkjhj';
+
+
+
+drop function cost_function(double, int, timestamp)
