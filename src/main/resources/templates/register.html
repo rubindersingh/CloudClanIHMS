@@ -4,17 +4,22 @@
 <head>
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>Cloud IHMS - Login</title>
+    <title>Cloud IHMS - Register</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'/>
     <link rel="stylesheet" href="/css/login.css"/>
+    <script>
+        $( document ).ready(function() {
+            console.log( "ready!" );
+        });
+    </script>
 </head>
 <body>
 <div class="container">
     <div class="row">
             <div class="wrapper">
-                <form th:action="@{/login}" method="post" class="form-signin">
+                <form th:action="@{/registration}" method="post" class="form-signin">
                     <div th:if="${param.error}">
                         <div class="alert alert-danger">
                             Invalid username and password.
@@ -25,8 +30,10 @@
                             You have been logged out.
                         </div>
                     </div>
-                    <div><label> User Name : <input type="text" name="username" class="form-control" placeholder="Email" required="" autofocus=""/></label></div>
+                    <div><label> User Name : <input type="text" name="emailId" class="form-control" placeholder="Email" required="" autofocus=""/></label></div>
                     <div><label> Password: <input type="password" name="password" class="form-control" placeholder="Password" required=""/></label></div>
+                    <div><label> First Name: <input type="text" name="firstName" class="form-control" placeholder="First Name" required=""/></label></div>
+                    <div><label> Last Name: <input type="text" name="lastName" class="form-control" placeholder="Last Name" required=""/></label></div>
                     <div><button class="btn btn-lg btn-primary btn-block" type="submit">Sign In</button></div>
                 </form>
             </div>

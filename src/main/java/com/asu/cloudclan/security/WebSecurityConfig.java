@@ -37,39 +37,36 @@ public class WebSecurityConfig {
     @Order(1)
     public static class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
         protected void configure(HttpSecurity http) throws Exception {
-            /*http.csrf().disable()
-                    .authorizeRequests()
-                    .antMatchers("/images*//**").permitAll();*/
-
             http.csrf().disable()
                     .authorizeRequests()
+                    .antMatchers("/register*","/css/**").permitAll()
                     .antMatchers("/registration").permitAll()
                     .antMatchers("/images/{state}/{containerId}/**").access("@springSecurityAuthenticationService.isContainerAccessible(authentication,#containerId)")
-                    .antMatchers("/images*//**", "/containers*//**")
+                    .antMatchers("/images*//**", "/containers*//**", "/**")
                     .authenticated()
                     .and()
                     .httpBasic();
         }
     }
 
-    @Configuration
+/*    @Configuration
+    @Order(0)
     public static class FormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.authorizeRequests()
-                    .antMatchers("/**").permitAll()
-                    .antMatchers("/css/**", "/js/**", "/images/**", "/**/favicon.ico","/static/**", "/public/**").permitAll();
-                    /*.antMatchers().permitAll()
-                    .anyRequest().authenticated()
+            http.csrf().disable().authorizeRequests()
+                    //.antMatchers("/register*","/css*//**", "/js*//**", "/assets*//**", "*//**//*favicon.ico","/static*//**", "/public*//**").permitAll()
+                    .antMatchers("/register*","/css*//**").permitAll()
+                    .antMatchers("*//**").authenticated()
                     .and()
                     .formLogin()
-                    .loginPage("/login")
-                    .permitAll()
+                    .defaultSuccessUrl("/home.html", true)
+                    .loginPage("/signin").permitAll()
                     .and()
                     .logout()
-                    .permitAll();*/
+                    .permitAll();
         }
-    }
+    }*/
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -77,8 +74,6 @@ public class WebSecurityConfig {
         authProvider.setUserDetailsService(springSecurityAuthenticationService);
         authProvider.setPasswordEncoder(passwordEncoder());
         auth.authenticationProvider(authProvider);
-        /*auth.inMemoryAuthentication()
-                .withUser("user").password("password").roles("USER");*/
     }
 
 }

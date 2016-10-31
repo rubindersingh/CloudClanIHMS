@@ -7,12 +7,17 @@ spring:
     redis:
       cluster:
         nodes: 192.168.1.4:6379,192.168.1.5:6379
+
 server:
     port: 8888
 
 ---
 spring:
     profiles: dev
+    thymeleaf:
+      cache: false
+      mode: HTML5
+      check-template: false
 server:
   port: 8180
 cassandra:
