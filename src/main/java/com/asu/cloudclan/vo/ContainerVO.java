@@ -9,6 +9,22 @@ public class ContainerVO extends RequestResponseVO {
     private String name;
     private String emailId;
 
+    public ContainerVO(String id, String type, String name, String emailId) {
+        this.id = id;
+        this.type = type;
+        this.name = name;
+        this.emailId = emailId;
+    }
+
+    public ContainerVO(String id, String type, String name) {
+        this.id = id;
+        this.type = type;
+        this.name = name;
+    }
+
+    public ContainerVO() {
+    }
+
     public String getId() {
         return id;
     }

@@ -7,34 +7,33 @@
     <title>Cloud IHMS - Register</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="/js/register.js"></script>
     <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'/>
-    <link rel="stylesheet" href="/css/login.css"/>
-    <script>
-        $( document ).ready(function() {
-            console.log( "ready!" );
-        });
-    </script>
+    <link rel="stylesheet" href="/css/register.css"/>
+
 </head>
 <body>
 <div class="container">
     <div class="row">
+        <div class="page-header">
+            <div style="margin: 0 auto; text-align: center">
+                <h1>User Registration</h1>
+                <h1><small>Register to enjoy CloudClan Services!!!</small></h1>
+            </div>
+        </div>
+    </div>
+    <div class="row">
             <div class="wrapper">
-                <form th:action="@{/registration}" method="post" class="form-signin">
-                    <div th:if="${param.error}">
-                        <div class="alert alert-danger">
-                            Invalid username and password.
-                        </div>
+                <form class="form-signin">
+                    <div class="errorMessage">
                     </div>
-                    <div th:if="${param.logout}">
-                        <div class="alert alert-info">
-                            You have been logged out.
-                        </div>
-                    </div>
-                    <div><label> User Name : <input type="text" name="emailId" class="form-control" placeholder="Email" required="" autofocus=""/></label></div>
-                    <div><label> Password: <input type="password" name="password" class="form-control" placeholder="Password" required=""/></label></div>
                     <div><label> First Name: <input type="text" name="firstName" class="form-control" placeholder="First Name" required=""/></label></div>
                     <div><label> Last Name: <input type="text" name="lastName" class="form-control" placeholder="Last Name" required=""/></label></div>
-                    <div><button class="btn btn-lg btn-primary btn-block" type="submit">Sign In</button></div>
+                    <div><label> User Name : <input type="text" name="emailId" class="form-control" placeholder="Email" required="" autofocus=""/></label></div>
+                    <div><label> Password: <input type="password" name="password" class="form-control" placeholder="Password" required=""/></label></div>
+                    <div><button class="btn btn-lg btn-primary btn-block" type="button">Sign In</button></div>
+                    <div class="successMessage">
+                    </div>
                 </form>
             </div>
     </div>

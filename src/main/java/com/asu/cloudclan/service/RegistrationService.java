@@ -34,19 +34,19 @@ public class RegistrationService {
         if(registrationVO!=null) {
             List<ErrorVO> errorVOs = new ArrayList<>();
 
-            if(registrationVO.getPassword() == null) {
+            if(registrationVO.getPassword() == null || registrationVO.getPassword().trim().equals("")) {
                 errorVOs.add(new ErrorVO("password", messageSource.getMessage("password.null", null, Locale.getDefault())));
             }
 
-            if(registrationVO.getFirstName() == null) {
+            if(registrationVO.getFirstName() == null || registrationVO.getFirstName().trim().equals("")) {
                 errorVOs.add(new ErrorVO("firstName", messageSource.getMessage("first.name.null", null, Locale.getDefault())));
             }
 
-            if(registrationVO.getLastName() == null) {
+            if(registrationVO.getLastName() == null || registrationVO.getLastName().trim().equals("")) {
                 errorVOs.add(new ErrorVO("lastName", messageSource.getMessage("last.name.null", null, Locale.getDefault())));
             }
 
-            if(registrationVO.getEmailId() == null) {
+            if(registrationVO.getEmailId() == null || registrationVO.getEmailId().trim().equals("")) {
                 errorVOs.add(new ErrorVO("emailId", messageSource.getMessage("email.id.null", null, Locale.getDefault())));
             } else {
                 if(!ValidationUtil.isvalidEmail(registrationVO.getEmailId())) {

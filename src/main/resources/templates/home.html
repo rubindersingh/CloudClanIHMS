@@ -1,13 +1,132 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" lang="en">
 <head>
-    <title>Hello World!</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Cloud IHMS - Home</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="/js/home.js"></script>
+    <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'/>
+    <link rel="stylesheet" href="/css/home.css"/>
+
 </head>
 <body>
-<h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
-<form th:action="@{/logout}" method="post">
-    <input type="submit" value="Sign Out"/>
-</form>
+<div class="container">
+    <div class="page-header">
+        <div style="margin: 0 auto; text-align: center">
+            <h1><small th:inline="text">Welcome [[${#httpServletRequest.remoteUser}]]!</small></h1>
+        </div>
+    </div>
+    <div class="row">
+            <div class="col-md-12">
+                    <div class="usageDetail" th:inline="text"><span>Total Containers:</span>  [[${usageDataVO.containers}]]</div>
+                    <div class="usageDetail" th:inline="text"><span>Total Images:</span>  [[${usageDataVO.images}]]</div>
+                    <div class="usageDetail" th:inline="text"><span>Total Transformation:</span>  [[${usageDataVO.transformations}]]</div>
+            </div>
+            <div class="col-md-12">
+                    <div class="usageDetail" th:inline="text"><span>Total Storage Size:</span>  [[${usageDataVO.imagesSize}]]</div>
+                    <div class="usageDetail" th:inline="text"><span>Total Images:</span>  [[${usageDataVO.uploadedSize}]]</div>
+                    <div class="usageDetail" th:inline="text"><span>Total Transformation:</span>  [[${usageDataVO.downloadedSize}]]</div>
+            </div>
+    </div>
+    <div class="row" style="margin-top: 10px">
+        <button class="createContainer btn btn-primary" type="button" data-toggle="modal" data-target="#createContainerModal">Create Container</button>
+    </div>
+    <div class="clearfix visible-sm"></div>
+    <div class="row bottom"></div>
+    <div class="row">
+        <div class="containers">
+            <div th:each="containerVO : ${containerVOs}" class="col-md-3" style="margin-bottom: 10px">
+                <div class="containerDiv" th:id="${containerVO.id}">
+                    <div th:class='${containerVO.type}'></div>
+                    <span th:inline="text">[[${containerVO.name}]]</span><br/>
+                    <p th:inline="text">ID: [[${containerVO.id}]]</p>
+                </div>
+            </div>
+        </div>
+        <div class="upload">
+            <ol class="breadcrumb">
+                <li><a href="#" class="gotoContainers">Containers</a></li>
+                <li class="active"></li>
+            </ol>
+
+            <div class="col-md-8">
+                <label> Folder upload : <input type="file" id="folderUpload" class="form-control" placeholder="Upload folders" webkitdirectory="" directory=""/></label>
+                <br/>
+                <label> Files upload : <input type="file" id="fileUpload" class="form-control" placeholder="Upload files" multiple=""/></label>
+            </div>
+            <div class="col-md-4 pull-right text-right">
+                <button class="shareContainer btn btn-primary" type="button" data-toggle="modal" data-target="#shareContainerModal">Share Container</button>
+            </div>
+        </div>
+
+        <div class="modal fade" id="createContainerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">Create Container</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-create-container">
+                            <div class="errorMessage">
+                            </div>
+                            <div><label> Container Name: <input type="text" name="name" class="form-control" placeholder="Container Name" required=""/></label></div>
+                            <div>
+                                <label>Container Type: </label>
+                                <label class="radio-inline"><input type="radio" name="type" value="PUBLIC"/>Public</label>
+                                <label class="radio-inline"><input type="radio" name="type" value="PRIVATE"/>Private</label>
+                            </div>
+                            <div><button class="btn btn-lg btn-primary" type="button">Create</button></div>
+                            <br/>
+                            <div class="successMessage">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="shareContainerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel2">Share Container</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-share-container">
+                            <div class="errorMessage">
+                            </div>
+                            <div><label> Email: <input type="text" name="emailId" class="form-control" placeholder="Email" required=""/></label></div>
+                            <div>
+                                <label>Access Type: </label>
+                                <label class="radio-inline"><input type="radio" name="type" value="AD"/>Admin</label>
+                                <label class="radio-inline"><input type="radio" name="type" value="RW"/>Read and Write</label>
+                                <label class="radio-inline"><input type="radio" name="type" value="W"/>Write only</label>
+                                <label class="radio-inline"><input type="radio" name="type" value="R"/>Read only</label>
+                            </div>
+                            <div><button class="btn btn-lg btn-primary" type="button">Share</button></div>
+                            <br/>
+                            <div class="successMessage">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
+

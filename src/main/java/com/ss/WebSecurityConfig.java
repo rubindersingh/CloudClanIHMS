@@ -34,16 +34,15 @@ public class WebSecurityConfig {
         protected void configure(HttpSecurity http) throws Exception {
             http.authorizeRequests()
                     .antMatchers("/**").permitAll()
-                    .antMatchers("/css/**", "/js/**", "/images/**", "/**/favicon.ico","/static/**", "/public/**").permitAll();
-                    /*.antMatchers().permitAll()
+                    .antMatchers("/css/**", "/js/**", "/images/**", "/**/favicon.ico","/static/**", "/public/**").permitAll()
                     .anyRequest().authenticated()
                     .and()
                     .formLogin()
-                    .loginPage("/login")
+                    .loginPage("/signin")
                     .permitAll()
                     .and()
                     .logout()
-                    .permitAll();*/
+                    .permitAll();
         }
     }
 
