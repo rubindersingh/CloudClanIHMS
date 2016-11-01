@@ -12,7 +12,7 @@ import java.io.InputStream;
 /**
  * Created by ubuntu on 10/4/16.
  */
-//@Service
+@Service
 public class SwiftStorageCoreService {
 
     @Autowired

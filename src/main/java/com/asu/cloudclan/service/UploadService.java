@@ -34,8 +34,8 @@ public class UploadService {
 
     @Autowired
     private MessageSource messageSource;
-    //@Autowired
-    //private SwiftStorageService swiftStorageService;
+    @Autowired
+    private SwiftStorageService swiftStorageService;
     @Autowired
     private CoreTransformationService coreTransformationService;
     @Autowired
@@ -77,9 +77,9 @@ public class UploadService {
                                 imageMetadataVO.setTransformed(1);
                             }
                             imageMetadataVO.setStoredSize((int) inputStream.available());
-                            //swiftStorageService.uploadObject(uploadVO.getContainerId()+imageVO.getUrl(), inputStream);
+                            swiftStorageService.uploadObject(uploadVO.getContainerId()+imageVO.getUrl()+imageMetadataVO.getTransformation(), inputStream);
                             String url = fullName.substring(0,dotLastIndex);
-                            imageMetadataVO.setObjectId(uploadVO.getContainerId()+url);
+                            imageMetadataVO.setObjectId(uploadVO.getContainerId()+url+imageMetadataVO.getTransformation());
                             imageMetadataVO.setUrl(url);
                         } else {
                             imageVO.setStatus(UploadStatus.SKIPPED);

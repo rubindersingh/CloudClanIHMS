@@ -1,12 +1,9 @@
 spring:
     profiles:
       active: dev
-    thymeleaf:
-      cache: false
-      mode: HTML5
-    redis:
-      cluster:
-        nodes: 192.168.1.4:6379,192.168.1.5:6379
+thymeleaf:
+  cache: false
+  mode: HTML5
 server:
     port: 8888
 
@@ -21,6 +18,11 @@ cassandra:
 ---
 spring:
     profiles: prod
+    rabbitmq:
+      host: 192.168.1.10
+    redis:
+      cluster:
+        nodes: 192.168.1.4:6379,192.168.1.5:6379
 server:
   port: 8888
 cassandra:

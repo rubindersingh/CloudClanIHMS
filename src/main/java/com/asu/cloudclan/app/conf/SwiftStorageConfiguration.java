@@ -19,7 +19,7 @@ import org.springframework.core.env.Environment;
 /**
  * Created by rubinder on 10/3/16.
  */
-//@Configuration
+@Configuration
 public class SwiftStorageConfiguration {
 
     @Autowired
@@ -30,7 +30,7 @@ public class SwiftStorageConfiguration {
         AccountConfig config = new AccountConfig();
         config.setUsername("admin:admin");
         config.setPassword("admin");
-        config.setAuthUrl("http://127.0.0.1:8080/auth/v1.0");
+        config.setAuthUrl("http://192.168.1.10:8080/auth/v1.0");
         config.setAuthenticationMethod(AuthenticationMethod.TEMPAUTH);
         return config;
     }

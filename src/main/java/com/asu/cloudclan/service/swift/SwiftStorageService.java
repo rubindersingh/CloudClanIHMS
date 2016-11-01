@@ -11,7 +11,7 @@ import java.util.UUID;
 /**
  * Created by rubinder on 10/4/16.
  */
-//@Service
+@Service
 public class SwiftStorageService {
 
     @Autowired
