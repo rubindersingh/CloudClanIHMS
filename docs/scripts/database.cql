@@ -8,45 +8,30 @@ first_name text,
 last_name text
 );
 
-CREATE TABLE container(
+CREATE TABLE IF NOT EXISTS container(
 id text PRIMARY KEY,
 name text,
 type text
 );
 
-CREATE TABLE user_container(
+CREATE TABLE IF NOT EXISTS user_container(
 email_id text,
 container_id text,
 r_container_id text,
 access_type text,
 PRIMARY KEY(email_id, container_id)
 );
-CREATE INDEX user_container_r_container_id_idx ON user_container (r_container_id);
 
-CREATE TYPE image_metadata(
-object_id text,
-width int,
-height int,
-size int,
-transformation text,
-type text
-);
+CREATE INDEX IF NOT EXISTS user_container_r_container_id_idx ON user_container (r_container_id);
 
-CREATE TYPE image_metadata(
-object_id text,
-size int,
-transformation text,
-type text
-);
-
-CREATE TABLE image(
+CREATE TABLE IF NOT EXISTS image(
 container_id text,
 url text,
 metadata map<text,text>,
 PRIMARY KEY(container_id, url)
 );
 
-CREATE TABLE image_service_use(
+CREATE TABLE IF NOT EXISTS image_service_use(
 container_id text,
 url text,
 ts uuid,
@@ -56,7 +41,7 @@ download_size int,
 PRIMARY KEY(container_id,url,ts)
 );
 
-CREATE TABLE image_storage_use(
+CREATE TABLE IF NOT EXISTS image_storage_use(
 container_id text,
 url text,
 transformation text,
@@ -64,41 +49,6 @@ size int,
 ts timeuuid,
 PRIMARY KEY(container_id,url,transformation)
 );
-
-Insert into image_storage_use(container_id,url,transformation,ts,size) values ('vhhkkjhj','/home/pic.jpg','OPTIMIZED',now(), 100000);
-Insert into image_storage_use(container_id,url,transformation,ts,size) values ('vhhkkjhj','/home/pic1.jpg','OPTIMIZED',now(), 100000);
-Insert into image_storage_use(container_id,url,transformation,ts,size) values ('vhhkkjhj','/home/pic2.jpg','OPTIMIZED',now(), 100000);
-
-
-CREATE INDEX image_stats_container_id_idx ON image_stats (container_id);
-CREATE INDEX image_stats_url_idx ON image_stats (url);
-
-Insert into image_stats(container_id,url,ts,size,trans,upload_size) values ('vhhkkjhj','/home/pic.jpg',now(), 1000, 1, 10000);
-Insert into image_stats(container_id,url,ts,size,trans,upload_size) values ('vhhkkjhj','/home/pic1.jpg',now(), 1000, 1, 10000);
-Insert into image_stats(container_id,url,ts,size,trans,upload_size) values ('vhhkkjhj','/home/pic2.jpg',now(), 1000, 1, 10000);
-Insert into image_stats(container_id,url,ts,size,trans,upload_size) values ('vhhkkjhj','/home/pic2.jpg',now(), 100000, 1, 1000);
-Insert into image_stats(container_id,url,total_size,total_trans) values ('vhhkkjhj','/home/pic.jpg', 1000, 1);
-Insert into image_stats(container_id,url,total_size,total_trans) values ('vhhkkjhj','/home/pic.jpg', 1000, 1);
-Insert into image_stats(container_id,url,total_size,total_trans) values ('vhhkkjhj','/home/pic.jpg', 1000, 1);
-
-select group_and_total(url,size),group_and_total(url,trans),group_and_total(url,upload_size) from image_stats where container_id = 'vhhkkjhj' AND url IN ('/home/pic.jpg', '/home/pic1.jpg','/home/pic2.jpg');
-
-CREATE FUNCTION state_group_and_total( state map<text, int>, type text, amount int )
-CALLED ON NULL INPUT
-RETURNS map<text, int>
-LANGUAGE java AS '
-Integer count = (Integer) state.get(type);  if (count == null) count = amount; else count = count + amount; state.put(type, count); return state; ' ;
-
-
-CREATE OR REPLACE AGGREGATE group_and_total(text, int)
-SFUNC state_group_and_total
-STYPE map<text, int>
-INITCOND {};
-
-select sum(size),sum(download_size),sum(trans),sum(upload_size) from image_stats where container_id='vhhkkjhj';
-
-
-cost_function(float, int, timestamp)
 
 CREATE OR REPLACE FUNCTION cost_function( totaltime double, size int, ts timestamp)
 CALLED ON NULL INPUT
@@ -110,20 +60,3 @@ if (totaltime == null) totaltime = (double) (new Date().getTime()-ts.getTime())*
 CREATE OR REPLACE AGGREGATE totalcost(int, timestamp)
 SFUNC cost_function
 STYPE double;
-
-
-CREATE TABLE image_storage_use(
-container_id text,
-url text,
-transformation text,
-size int,
-ts timeuuid,
-PRIMARY KEY(container_id,url,transformation)
-);
-
-select sum(size), totalcost(size, toTimestamp(ts)) from image_storage_use where container_id='vhhkkjhj';
-
-
-
-drop function cost_function(bigint, int, timestamp)
-drop AGGREGATE totalcost(int, timestamp)

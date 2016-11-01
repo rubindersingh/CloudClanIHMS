@@ -6,6 +6,7 @@ import com.asu.cloudclan.service.cassandra.ImageCoreService;
 import com.asu.cloudclan.service.core.CoreTransformationService;
 import com.asu.cloudclan.service.rabbitmq.RabbitMQSenderService;
 import com.asu.cloudclan.service.redis.RedisCacheStoreService;
+import com.asu.cloudclan.service.swift.SwiftStorageService;
 import com.asu.cloudclan.vo.ErrorVO;
 import com.asu.cloudclan.vo.ImageMetadataVO;
 import com.asu.cloudclan.vo.TransformationVO;
@@ -34,8 +35,8 @@ public class ImageService {
     private ImageCoreService imageCoreService;
     @Autowired
     private RabbitMQSenderService rabbitMQSenderService;
-    /*@Autowired
-    SwiftStorageService swiftStorageService;*/
+    @Autowired
+    SwiftStorageService swiftStorageService;
     @Autowired
     CoreTransformationService coreTransformationService;
     @Autowired
@@ -96,7 +97,7 @@ public class ImageService {
                 }
             }
 
-            InputStream inputStream = new FileInputStream("/opt/jpg/101100.jpg");//swiftStorageService.downloadObject(objectId);
+            InputStream inputStream = swiftStorageService.downloadObject(objectId);
             ImageMetadataVO imageMetadataVO = new ImageMetadataVO();
             imageMetadataVO.setContainerId(containerId);
             imageMetadataVO.setUrl(urlWithoutExt);
@@ -108,10 +109,10 @@ public class ImageService {
                 imageMetadataVO.setTransformation(transformation);
                 imageMetadataVO.setTransformed(1);
                 if(state.equals("p")) {
-                    imageMetadataVO.setStoredSize(inputStream.available()); //TODO change size
+                    imageMetadataVO.setStoredSize(inputStream.available());
                     imageMetadataVO.setObjectId(containerId+urlWithoutExt+transformation);
                     imageMetadataVO.setType(ImageFormat.JPG.name());
-                    //swiftStorageService.uploadObject(containerId+urlWithoutExt+transformation, inputStream);
+                    swiftStorageService.uploadObject(containerId+urlWithoutExt+transformation, inputStream);
                     redisCacheStoreService.saveImageObjectId(containerId+urlWithoutExt+transformation, containerId+urlWithoutExt+transformation);
                 }
             }

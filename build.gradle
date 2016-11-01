@@ -13,11 +13,23 @@ buildscript {
 }
 
 apply plugin: 'idea'
+apply plugin: 'spring-boot'
+apply plugin: 'eclipse'
+apply plugin: 'scala'
 
 idea {
 	module {
 		inheritOutputDirs = false
 		outputDir = file("$buildDir/classes/main/")
+	}
+}
+
+sourceSets {
+	main {
+		scala {
+			srcDirs = ['src/main/scala', 'src/main/java']
+		}
+		java { srcDirs = [] }
 	}
 }
 
@@ -63,6 +75,7 @@ dependencies {
 	compile "commons-io:commons-io:2.5"
 
 	//Image Library Dependencies
+    compile 'org.scala-lang:scala-library:2.11.7'
 	compile 'com.sksamuel.scrimage:scrimage-core_2.11:2.1.7'
 	compile 'com.sksamuel.scrimage:scrimage-filters_2.11:2.1.7'
 
