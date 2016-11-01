@@ -57,16 +57,16 @@ public class ImageService {
             }
 
             String transformation = transformationVO.toString();
-            boolean noTransformation = false;
+            boolean transform = true;
             if(transformation.length() == 0) {
                 transformation = "";
-                noTransformation = true;
+                transform = false;
             }
 
             //Look up for container+URL+transformation in redis first else proceed to next lines
             // If not found, first validate transformation
             String objectId = redisCacheStoreService.lookupImageObjectId(containerId+urlWithoutExt+transformation);
-            boolean doTransformation = false;
+            boolean transformationFound = false;
             if(objectId == null) {
                 if(!transformationVO.validateAndConvert()) {
                     ErrorVO errorVO = new ErrorVO(messageSource.getMessage("invalid.image.op.params",null,null));
@@ -83,15 +83,15 @@ public class ImageService {
                 }
                 Map<String, String> metadataMap = image.getMetadataMap();
 
-                if(noTransformation || !metadataMap.containsKey(transformation)) {
+                if(!transform || !metadataMap.containsKey(transformation)) {
                     if(metadataMap.containsKey("OPTIMIZED")) {
                         objectId = metadataMap.get("OPTIMIZED");
                     } else {
                         objectId = metadataMap.get("ORIGINAL");
                     }
-                    doTransformation = true;
                 } else {
                     objectId = metadataMap.get(transformation);
+                    transformationFound = true;
                     redisCacheStoreService.saveImageObjectId(containerId+urlWithoutExt+transformation, objectId);
                 }
             }
@@ -101,7 +101,7 @@ public class ImageService {
             imageMetadataVO.setContainerId(containerId);
             imageMetadataVO.setUrl(urlWithoutExt);
             imageMetadataVO.setDownloadSize(inputStream.available()); //TODO change size
-            if(!noTransformation && doTransformation) {
+            if(transform && !transformationFound) {
                 //Run required transform here and return
                 inputStream = coreTransformationService.transform(inputStream, transformationVO);
 

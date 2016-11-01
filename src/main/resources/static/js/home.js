@@ -43,10 +43,25 @@ $( document ).ready(function() {
                         +'<span>'+result.name+'</span>'
                         +'</div>'
                         +'</div>').click(showUpload).appendTo(".containers");
-                    $(".form-create-container").reset()
+                }
+            },
+            error: function(result) {
+                if(result.errorVOs) {
+                    $.each(result.errorVOs, function (i, errorVO) {
+                        $(".form-create-container .errorMessage").append('<div class="alert alert-danger alert-dismissible" role="alert">'
+                            + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                            + errorVO.message
+                            + '</div>');
+                    })
+                } else {
+                    $(".form-create-container .errorMessage").append('<div class="alert alert-danger alert-dismissible" role="alert">'
+                        + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                        + 'Something went wrong.'
+                        + '</div>');
                 }
             }
         });
+        $('.form-create-container .reset').click();
     });
 
     $(".form-share-container .btn").click(function () {
@@ -70,7 +85,73 @@ $( document ).ready(function() {
                         + 'Container Successfully Shared.'
                         + '</div>');
                 }
+            },
+            error: function(result) {
+                if(result.errorVOs) {
+                    $.each(result.errorVOs, function (i, errorVO) {
+                        $(".form-share-container .errorMessage").append('<div class="alert alert-danger alert-dismissible" role="alert">'
+                            + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                            + errorVO.message
+                            + '</div>');
+                    })
+                } else {
+                    $(".form-share-container .errorMessage").append('<div class="alert alert-danger alert-dismissible" role="alert">'
+                        + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                        + 'Something went wrong.'
+                        + '</div>');
+                }
             }
         });
+        $('.form-share-container .reset').click();
     });
+
+    var uploadFiles = function (e) {
+        var data = new FormData();
+        data.append('containerId', containerId);
+        data.append('keepOriginal', true);
+        $.each(e.target.files, function(i, file) {
+            data.append('files', file);
+        });
+        $.ajax({
+            url: '/images/',
+            data: data,
+            cache: false,
+            contentType: false,
+            processData: false,
+            type: 'POST',
+            success: function(result){
+                if(result.errorVOs) {
+                    $.each(result.errorVOs, function (i, errorVO) {
+                        $(".upload .errorMessage").append('<div class="alert alert-danger alert-dismissible" role="alert">'
+                            + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                            + errorVO.message
+                            + '</div>');
+                    })
+                } else {
+                    $(".upload .successMessage").append('<div class="alert alert-success alert-dismissible" role="alert">'
+                        + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                        + 'Images Successfully Uploaded.'
+                        + '</div>');
+                }
+            },
+            error: function(error){
+                if(error.errorVOs) {
+                    $.each(result.errorVOs, function (i, errorVO) {
+                        $(".upload .errorMessage").append('<div class="alert alert-danger alert-dismissible" role="alert">'
+                            + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                            + errorVO.message
+                            + '</div>');
+                    })
+                } else {
+                    $(".upload .errorMessage").append('<div class="alert alert-danger alert-dismissible" role="alert">'
+                        + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                        + 'Something went wrong.'
+                        + '</div>');
+                }
+            }
+        });
+        $('.form-upload .reset').click();
+    };
+    $('#folderUpload').change(uploadFiles);
+    $('#fileUpload').change(uploadFiles);
 });

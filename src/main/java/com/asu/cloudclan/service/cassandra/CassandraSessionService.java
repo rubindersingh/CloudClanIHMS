@@ -31,6 +31,10 @@ public class CassandraSessionService {
     private PreparedStatement SAVE_TRANSFORMATION;
     private PreparedStatement SAVE_IMAGE_SERVICE_USE;
     private PreparedStatement SAVE_IMAGE_STORAGE_USE;
+    private PreparedStatement GET_ALL_USER_CONTAINERS;
+    private PreparedStatement GET_CONTAINERS_BY_ID_LIST;
+    private PreparedStatement GET_SERVICE_USAGE_BY_CONTAINER_ID_LIST;
+    private PreparedStatement GET_STORAGE_USAGE_BY_CONTAINER_ID_LIST;
 
     @Autowired
     public CassandraSessionService(Environment env) {
@@ -51,6 +55,9 @@ public class CassandraSessionService {
 
         SAVE_IMAGE_SERVICE_USE = session.prepare("INSERT INTO image_service_use (container_id, url, ts, trans, upload_size, download_size) VALUES (?, ?, ?, ?, ?, ?)");
         SAVE_IMAGE_STORAGE_USE = session.prepare("INSERT INTO image_storage_use (container_id, url, transformation, size, ts) VALUES (?, ?, ?, ?, ?)");
+
+        GET_ALL_USER_CONTAINERS = session.prepare("SELECT container_id, access_type FROM user_container WHERE email_id = ?");
+        GET_CONTAINERS_BY_ID_LIST = session.prepare("SELECT * FROM container WHERE id IN ?");
     }
 
     public MappingManager getManager() {
@@ -83,5 +90,13 @@ public class CassandraSessionService {
 
     public PreparedStatement getSaveImageStorageUseStatement() {
         return SAVE_IMAGE_STORAGE_USE;
+    }
+
+    public PreparedStatement getAllUserContainers() {
+        return GET_ALL_USER_CONTAINERS;
+    }
+
+    public PreparedStatement getContainersByIdList() {
+        return GET_CONTAINERS_BY_ID_LIST;
     }
 }

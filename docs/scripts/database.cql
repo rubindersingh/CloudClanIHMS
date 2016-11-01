@@ -98,14 +98,13 @@ INITCOND {};
 select sum(size),sum(download_size),sum(trans),sum(upload_size) from image_stats where container_id='vhhkkjhj';
 
 
+cost_function(float, int, timestamp)
 
-
-CREATE OR REPLACE FUNCTION cost_function( state float, size int, ts timestamp)
+CREATE OR REPLACE FUNCTION cost_function( totaltime double, size int, ts timestamp)
 CALLED ON NULL INPUT
 RETURNS double
 LANGUAGE java AS '
-double amount = 0.001;
-if (state == null) state = amount*((new Date().getTime())-(ts.getTime()))*size; else state = state + amount*((new Date().getTime())-(ts.getTime()))*size; return state; ' ;
+if (totaltime == null) totaltime = (double) (new Date().getTime()-ts.getTime())*size; else totaltime = totaltime + (new Date().getTime()-ts.getTime())*size; return totaltime; ' ;
 
 
 CREATE OR REPLACE AGGREGATE totalcost(int, timestamp)
@@ -122,8 +121,9 @@ ts timeuuid,
 PRIMARY KEY(container_id,url,transformation)
 );
 
-select totalcost(size, toTimestamp(ts)) from image_storage_use where container_id='vhhkkjhj';
+select sum(size), totalcost(size, toTimestamp(ts)) from image_storage_use where container_id='vhhkkjhj';
 
 
 
-drop function cost_function(double, int, timestamp)
+drop function cost_function(bigint, int, timestamp)
+drop AGGREGATE totalcost(int, timestamp)

@@ -49,25 +49,6 @@ public class WebSecurityConfig {
         }
     }
 
-/*    @Configuration
-    @Order(0)
-    public static class FormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
-            http.csrf().disable().authorizeRequests()
-                    //.antMatchers("/register*","/css*//**", "/js*//**", "/assets*//**", "*//**//*favicon.ico","/static*//**", "/public*//**").permitAll()
-                    .antMatchers("/register*","/css*//**").permitAll()
-                    .antMatchers("*//**").authenticated()
-                    .and()
-                    .formLogin()
-                    .defaultSuccessUrl("/home.html", true)
-                    .loginPage("/signin").permitAll()
-                    .and()
-                    .logout()
-                    .permitAll();
-        }
-    }*/
-
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();

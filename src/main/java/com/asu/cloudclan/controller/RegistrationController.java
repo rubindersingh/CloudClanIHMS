@@ -23,5 +23,6 @@ public class RegistrationController {
         registrationService.register(registrationVO);
         return registrationVO;
     }
+
 }
 

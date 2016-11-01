@@ -6,10 +6,14 @@ import com.asu.cloudclan.entity.cassandra.UserContainer;
 import com.asu.cloudclan.enums.AccessType;
 import com.asu.cloudclan.enums.ContainerType;
 import com.asu.cloudclan.service.util.ContainerGeneratorUtilService;
+import com.asu.cloudclan.util.SizeUtil;
 import com.asu.cloudclan.vo.ContainerVO;
 import com.asu.cloudclan.vo.ErrorVO;
+import com.asu.cloudclan.vo.HomeVO;
+import com.asu.cloudclan.vo.UsageDataVO;
 import com.datastax.driver.core.*;
 import com.datastax.driver.mapping.Mapper;
+import com.datastax.driver.mapping.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +21,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by rubinder on 10/2/16.
@@ -99,5 +102,64 @@ public class ContainerCoreService {
             return AccessType.hasReadAccess(userContainer.getAccessType());
         }
         return false;
+    }
+
+    public HomeVO getUsageAndContainers(String emailId) {
+        Session session = cassandraSessionService.getSession();
+        ResultSet resultSet = session.execute(cassandraSessionService.getAllUserContainers().bind(emailId));
+        Iterator<Row> rowIterator = resultSet.iterator();
+        Map<String, ContainerVO> map = new LinkedHashMap<>();
+        StringBuilder authoredContainers = new StringBuilder();
+        StringBuilder containerIds = new StringBuilder();
+        int authoredContainerSize = 0;
+        while (rowIterator.hasNext()) {
+            Row row = rowIterator.next();
+            String containerId = row.getString(0);
+            String accessType = row.getString(1);
+            if(accessType.equals(AccessType.A.name())) {
+                authoredContainers.append("'"+containerId+"',");
+                authoredContainerSize++;
+            }
+            containerIds.append("'"+containerId+"',");
+            ContainerVO containerVO = new ContainerVO(containerId,null,null,null,accessType);
+            map.put(containerId, containerVO);
+        }
+        containerIds.deleteCharAt(containerIds.length()-1);
+        authoredContainers.deleteCharAt(authoredContainers.length()-1);
+
+        resultSet = session.execute("SELECT * FROM container WHERE id IN ("+containerIds+")");
+        rowIterator = resultSet.iterator();
+        while (rowIterator.hasNext()) {
+            Row row = rowIterator.next();
+            String containerId = row.getString(0);
+            String name = row.getString(1);
+            String type = row.getString(2);
+
+            ContainerVO containerVO = map.get(containerId);
+            containerVO.setName(name);
+            containerVO.setType(type);
+        }
+
+        resultSet = session.execute("SELECT sum(trans),sum(upload_size),sum(download_size) FROM image_service_use WHERE container_id IN ("+authoredContainers+")");
+        Row row = resultSet.one();
+        Integer transformationCount = row.getInt(0);
+        Integer uploadSize = row.getInt(1);
+        Integer downloadSize = row.getInt(2);
+
+        resultSet = session.execute("SELECT sum(size), totalcost(size, toTimestamp(ts)) from image_storage_use WHERE container_id IN ("+authoredContainers+")");
+        row = resultSet.one();
+        Integer storedSize = row.getInt(0);
+        Double storedSizeTime = row.getDouble(1);
+
+        resultSet = session.execute("SELECT count(*) FROM image WHERE container_id IN ("+authoredContainers+")");
+        row = resultSet.one();
+        Long images = row.getLong(0);
+
+        UsageDataVO usageDataVO = new UsageDataVO(authoredContainerSize, images.intValue(), transformationCount, SizeUtil.calculateSize(storedSize),
+                SizeUtil.calculateSize(uploadSize), SizeUtil.calculateSize(downloadSize), SizeUtil.calculateTimeSize(storedSizeTime));
+        HomeVO homeVO = new HomeVO();
+        homeVO.setUsageDataVO(usageDataVO);
+        homeVO.setContainerVOs(new ArrayList<>(map.values()));
+        return homeVO;
     }
 }

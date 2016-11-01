@@ -23,12 +23,13 @@
             <div class="col-md-12">
                     <div class="usageDetail" th:inline="text"><span>Total Containers:</span>  [[${usageDataVO.containers}]]</div>
                     <div class="usageDetail" th:inline="text"><span>Total Images:</span>  [[${usageDataVO.images}]]</div>
-                    <div class="usageDetail" th:inline="text"><span>Total Transformation:</span>  [[${usageDataVO.transformations}]]</div>
+                    <div class="usageDetail" th:inline="text"><span>Total Transformations:</span>  [[${usageDataVO.transformations}]]</div>
             </div>
             <div class="col-md-12">
-                    <div class="usageDetail" th:inline="text"><span>Total Storage Size:</span>  [[${usageDataVO.imagesSize}]]</div>
-                    <div class="usageDetail" th:inline="text"><span>Total Images:</span>  [[${usageDataVO.uploadedSize}]]</div>
-                    <div class="usageDetail" th:inline="text"><span>Total Transformation:</span>  [[${usageDataVO.downloadedSize}]]</div>
+                    <div class="usageDetail" th:inline="text"><span>Cloud Storage Use:</span>  [[${usageDataVO.imagesSize}]]</div>
+                    <div class="usageDetail" th:inline="text"><span>Storage Billing Time:</span>  [[${usageDataVO.storedSizeTime}]]</div>
+                    <div class="usageDetail" th:inline="text"><span>Upload Bandwidth Use:</span>  [[${usageDataVO.uploadedSize}]]</div>
+                    <div class="usageDetail" th:inline="text"><span>Download Bandwidth Use:</span>  [[${usageDataVO.downloadedSize}]]</div>
             </div>
     </div>
     <div class="row" style="margin-top: 10px">
@@ -43,6 +44,7 @@
                     <div th:class='${containerVO.type}'></div>
                     <span th:inline="text">[[${containerVO.name}]]</span><br/>
                     <p th:inline="text">ID: [[${containerVO.id}]]</p>
+                    <p th:inline="text">AccessType: [[${containerVO.accessType}]]</p>
                 </div>
             </div>
         </div>
@@ -53,12 +55,21 @@
             </ol>
 
             <div class="col-md-8">
-                <label> Folder upload : <input type="file" id="folderUpload" class="form-control" placeholder="Upload folders" webkitdirectory="" directory=""/></label>
-                <br/>
-                <label> Files upload : <input type="file" id="fileUpload" class="form-control" placeholder="Upload files" multiple=""/></label>
+                <form class="form-upload">
+                    <input class="reset" type="reset" style="display: none"/>
+                    <label> Folder upload : <input type="file" id="folderUpload" class="form-control" placeholder="Upload folders" webkitdirectory="" directory=""/></label>
+                    <br/>
+                    <label> Files upload : <input type="file" id="fileUpload" class="form-control" placeholder="Upload files" multiple=""/></label>
+                </form>
             </div>
             <div class="col-md-4 pull-right text-right">
                 <button class="shareContainer btn btn-primary" type="button" data-toggle="modal" data-target="#shareContainerModal">Share Container</button>
+            </div>
+            <div class="col-md-8">
+                <div class="errorMessage">
+                </div>
+                <div class="successMessage">
+                </div>
             </div>
         </div>
 
@@ -75,6 +86,7 @@
                         <form class="form-create-container">
                             <div class="errorMessage">
                             </div>
+                            <input class="reset" type="reset" style="display: none"/>
                             <div><label> Container Name: <input type="text" name="name" class="form-control" placeholder="Container Name" required=""/></label></div>
                             <div>
                                 <label>Container Type: </label>
@@ -106,6 +118,7 @@
                         <form class="form-share-container">
                             <div class="errorMessage">
                             </div>
+                            <input class="reset" type="reset" style="display: none"/>
                             <div><label> Email: <input type="text" name="emailId" class="form-control" placeholder="Email" required=""/></label></div>
                             <div>
                                 <label>Access Type: </label>

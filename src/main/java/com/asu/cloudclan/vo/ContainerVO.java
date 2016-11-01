@@ -8,12 +8,14 @@ public class ContainerVO extends RequestResponseVO {
     private String type;
     private String name;
     private String emailId;
+    private String accessType;
 
-    public ContainerVO(String id, String type, String name, String emailId) {
+    public ContainerVO(String id, String type, String name, String emailId, String accessType) {
         this.id = id;
         this.type = type;
         this.name = name;
         this.emailId = emailId;
+        this.accessType = accessType;
     }
 
     public ContainerVO(String id, String type, String name) {
@@ -55,5 +57,13 @@ public class ContainerVO extends RequestResponseVO {
 
     public void setEmailId(String emailId) {
         this.emailId = emailId;
+    }
+
+    public String getAccessType() {
+        return accessType;
+    }
+
+    public void setAccessType(String accessType) {
+        this.accessType = accessType;
     }
 }

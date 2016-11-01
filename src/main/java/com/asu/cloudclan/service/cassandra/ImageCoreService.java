@@ -64,15 +64,4 @@ public class ImageCoreService {
         return imageMapper.get(container, url);
     }
 
-    public void doTransformation() {
-        Session session = cassandraSessionService.getSession();
-        PreparedStatement preparedStatement = session.prepare("select group_and_total(url,size),group_and_total(url,trans),group_and_total(url,upload_size) from image_stats where container_id = 'vhhkkjhj' AND url IN ('/home/pic.jpg', '/home/pic1.jpg','/home/pic2.jpg')");
-        ResultSet resultSet = session.execute(preparedStatement.bind());
-        Row row = resultSet.one();
-        Map map1 = row.getMap(0,String.class, Integer.class);
-        Map map2 = row.getMap(1,String.class, Integer.class);
-        Map map3 = row.getMap(2,String.class, Integer.class);
-        System.out.println();
-        return;
-    }
 }
