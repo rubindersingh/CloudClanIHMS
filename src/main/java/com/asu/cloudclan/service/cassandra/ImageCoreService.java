@@ -1,6 +1,7 @@
 package com.asu.cloudclan.service.cassandra;
 
 import com.asu.cloudclan.entity.cassandra.Image;
+import com.asu.cloudclan.enums.UploadStatus;
 import com.asu.cloudclan.vo.ImageMetadataVO;
 import com.asu.cloudclan.vo.UploadVO;
 import com.datastax.driver.core.*;
@@ -34,12 +35,14 @@ public class ImageCoreService {
         String containerId = uploadVO.getContainerId();
         List<ImageMetadataVO> imageMetadataVOs = uploadVO.getImageMetadataVOs();
         for (ImageMetadataVO imageMetadataVO : imageMetadataVOs) {
-            Map<String, String> map = new HashMap<>();
-            map.put(imageMetadataVO.getTransformation(), imageMetadataVO.getObjectId());
-            Session session = cassandraSessionService.getSession();
-            ResultSet resultSet = session.execute(cassandraSessionService.getSaveImageStatement().bind(containerId, imageMetadataVO.getUrl(), map));
-            resultSet = session.execute(cassandraSessionService.getSaveImageServiceUseStatement().bind(containerId, imageMetadataVO.getUrl(), UUIDs.timeBased(), imageMetadataVO.getTransformed(), imageMetadataVO.getUploadedSize(), imageMetadataVO.getDownloadSize()));
-            resultSet = session.execute(cassandraSessionService.getSaveImageStorageUseStatement().bind(containerId, imageMetadataVO.getUrl(), imageMetadataVO.getTransformation(), imageMetadataVO.getStoredSize(), UUIDs.timeBased()));
+            if(imageMetadataVO.getStatus() == UploadStatus.COMPLETED) {
+                Map<String, String> map = new HashMap<>();
+                map.put(imageMetadataVO.getTransformation(), imageMetadataVO.getObjectId());
+                Session session = cassandraSessionService.getSession();
+                ResultSet resultSet = session.execute(cassandraSessionService.getSaveImageStatement().bind(containerId, imageMetadataVO.getUrl(), map));
+                resultSet = session.execute(cassandraSessionService.getSaveImageServiceUseStatement().bind(containerId, imageMetadataVO.getUrl(), UUIDs.timeBased(), imageMetadataVO.getTransformed(), imageMetadataVO.getUploadedSize(), imageMetadataVO.getDownloadSize()));
+                resultSet = session.execute(cassandraSessionService.getSaveImageStorageUseStatement().bind(containerId, imageMetadataVO.getUrl(), imageMetadataVO.getTransformation(), imageMetadataVO.getStoredSize(), UUIDs.timeBased()));
+            }
         }
     }
 

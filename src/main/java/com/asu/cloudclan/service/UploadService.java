@@ -81,16 +81,21 @@ public class UploadService {
                             String url = fullName.substring(0,dotLastIndex);
                             imageMetadataVO.setObjectId(uploadVO.getContainerId()+url+imageMetadataVO.getTransformation());
                             imageMetadataVO.setUrl(url);
+                            imageVO.setStatus(UploadStatus.COMPLETED);
                         } else {
                             imageVO.setStatus(UploadStatus.SKIPPED);
+                            imageMetadataVO.setStatus(UploadStatus.SKIPPED);
                             imageVO.setMessage(messageSource.getMessage("file.format.not.supported", null, null));
                         }
                     } catch (Exception e) {
                         log.error("Error on uploading file", e);
                         imageVO.setStatus(UploadStatus.FAILED);
+                        imageMetadataVO.setStatus(UploadStatus.FAILED);
                     }
                     imageVOs.add(imageVO);
-                    imageMetadataVOs.add(imageMetadataVO);
+                    if (imageMetadataVO.getStatus() == UploadStatus.COMPLETED) {
+                        imageMetadataVOs.add(imageMetadataVO);
+                    }
                 }
                 uploadVO.setFiles(null);
                 uploadVO.setImageMetadataVOs(imageMetadataVOs);

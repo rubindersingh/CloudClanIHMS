@@ -2,6 +2,8 @@ package com.asu.cloudclan.service.swift;
 
 import org.javaswift.joss.model.Container;
 import org.javaswift.joss.model.StoredObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ import java.util.UUID;
 @Service
 public class SwiftStorageService {
 
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     SwiftStorageCoreService swiftStorageCoreService;
 
@@ -24,11 +28,21 @@ public class SwiftStorageService {
     }
 
     public String uploadObject(String objectId, InputStream inputStream) {
-        swiftStorageCoreService.uploadObjectAync(objectId, inputStream);
-        return objectId;
+        try {
+            swiftStorageCoreService.uploadObject(objectId, inputStream);
+            return objectId;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw e;
+        }
     }
 
     public InputStream downloadObject(String objectId) {
-        return swiftStorageCoreService.downloadObject(objectId);
+        try {
+            return swiftStorageCoreService.downloadObject(objectId);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return null;
+        }
     }
 }

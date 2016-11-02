@@ -98,22 +98,31 @@ public class ImageService {
             }
 
             InputStream inputStream = swiftStorageService.downloadObject(objectId);
+            if(inputStream == null) {
+                return null; //As object not found
+            }
             ImageMetadataVO imageMetadataVO = new ImageMetadataVO();
             imageMetadataVO.setContainerId(containerId);
             imageMetadataVO.setUrl(urlWithoutExt);
-            imageMetadataVO.setDownloadSize(inputStream.available()); //TODO change size
+            imageMetadataVO.setDownloadSize(inputStream.available());
             if(transform && !transformationFound) {
                 //Run required transform here and return
                 inputStream = coreTransformationService.transform(inputStream, transformationVO);
+                imageMetadataVO.setDownloadSize(inputStream.available());
 
                 imageMetadataVO.setTransformation(transformation);
                 imageMetadataVO.setTransformed(1);
                 if(state.equals("p")) {
                     imageMetadataVO.setStoredSize(inputStream.available());
-                    imageMetadataVO.setObjectId(containerId+urlWithoutExt+transformation);
                     imageMetadataVO.setType(ImageFormat.JPG.name());
-                    swiftStorageService.uploadObject(containerId+urlWithoutExt+transformation, inputStream);
-                    redisCacheStoreService.saveImageObjectId(containerId+urlWithoutExt+transformation, containerId+urlWithoutExt+transformation);
+                    try {
+                        swiftStorageService.uploadObject(containerId+urlWithoutExt+transformation, inputStream);
+                        redisCacheStoreService.saveImageObjectId(containerId+urlWithoutExt+transformation, containerId+urlWithoutExt+transformation);
+                        imageMetadataVO.setObjectId(containerId+urlWithoutExt+transformation);
+                    } catch (Exception e) {
+                        log.error("Unable to save tranformed image: ",e);
+                        imageMetadataVO.setObjectId(null);
+                    }
                 }
             }
             rabbitMQSenderService.sendDownloadInfo(imageMetadataVO);

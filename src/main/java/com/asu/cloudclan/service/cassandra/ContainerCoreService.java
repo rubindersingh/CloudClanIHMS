@@ -17,6 +17,7 @@ import com.datastax.driver.mapping.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
@@ -81,6 +82,7 @@ public class ContainerCoreService {
         return containerMapper.get(containerId);
     }
 
+    @Cacheable
     public boolean isPublic(String containerId) {
         Mapper<Container> containerMapper = cassandraSessionService.getManager().mapper(Container.class);
         Container container = containerMapper.get(containerId);
@@ -95,6 +97,7 @@ public class ContainerCoreService {
         return userContainerMapper.get(emailId, containerId);
     }
 
+    @Cacheable
     public boolean hasAccess(String emailId, String containerId) {
         Mapper<UserContainer> userContainerMapper = cassandraSessionService.getManager().mapper(UserContainer.class);
         UserContainer userContainer = userContainerMapper.get(emailId, containerId);

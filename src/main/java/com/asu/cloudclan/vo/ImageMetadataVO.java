@@ -1,5 +1,7 @@
 package com.asu.cloudclan.vo;
 
+import com.asu.cloudclan.enums.UploadStatus;
+
 /**
  * Created by rubinder on 10/26/16.
  */
@@ -13,6 +15,7 @@ public class ImageMetadataVO {
     private String transformation;
     private Integer transformed;
     private String containerId;
+    UploadStatus status;
 
     public String getObjectId() {
         return objectId;
@@ -85,4 +88,13 @@ public class ImageMetadataVO {
     public void setDownloadSize(Integer downloadSize) {
         this.downloadSize = downloadSize;
     }
+
+    public UploadStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(UploadStatus status) {
+        this.status = status;
+    }
 }
+
