@@ -23,7 +23,7 @@ public class RabbitMQListenerService {
 
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(value = "uploadQueue", durable = "true"),
-    exchange = @Exchange(value = "upload", ignoreDeclarationExceptions = "true"),
+    exchange = @Exchange(value = "upload", ignoreDeclarationExceptions = "true", durable = "true"),
     key = "upload"))
     public void recieveUploadInfo(@Payload UploadVO uploadVO, Message message) {
         imageCoreService.saveUploadInfo(uploadVO);
@@ -31,7 +31,7 @@ public class RabbitMQListenerService {
 
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(value = "downloadQueue", durable = "true"),
-            exchange = @Exchange(value = "download", ignoreDeclarationExceptions = "true"),
+            exchange = @Exchange(value = "download", ignoreDeclarationExceptions = "true", durable = "true"),
             key = "download"))
     public void recieveDownloadInfo(@Payload ImageMetadataVO imageMetadataVO, Message message) {
         imageCoreService.saveDownloadInfo(imageMetadataVO);

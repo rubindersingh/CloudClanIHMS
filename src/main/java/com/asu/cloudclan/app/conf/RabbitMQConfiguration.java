@@ -21,7 +21,10 @@ public class RabbitMQConfiguration {
 
     @Bean
     public ConnectionFactory connectionFactory() {
-        return new CachingConnectionFactory();
+        CachingConnectionFactory connectionFactory = new CachingConnectionFactory("192.168.1.10");
+        connectionFactory.setUsername("cloudclan");
+        connectionFactory.setPassword("cloudclan");
+        return connectionFactory;
     }
 
     @Bean

@@ -35,3 +35,5 @@ server:
 cassandra:
   servers: 192.168.1.4
   port: 9042
+logging:
+  file: /home/ubuntu/logs/cloudclanihms.log
