@@ -2,6 +2,7 @@ package com.asu.cloudclan.vo;
 
 import com.asu.cloudclan.enums.UploadStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * Created by rubinder on 10/4/16.

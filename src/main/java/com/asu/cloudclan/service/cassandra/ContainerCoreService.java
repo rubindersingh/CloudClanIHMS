@@ -82,7 +82,7 @@ public class ContainerCoreService {
         return containerMapper.get(containerId);
     }
 
-    @Cacheable
+    @Cacheable(value = "container", key = "#containerId")
     public boolean isPublic(String containerId) {
         Mapper<Container> containerMapper = cassandraSessionService.getManager().mapper(Container.class);
         Container container = containerMapper.get(containerId);
@@ -97,7 +97,7 @@ public class ContainerCoreService {
         return userContainerMapper.get(emailId, containerId);
     }
 
-    @Cacheable
+    @Cacheable(value = "container", key = "{#emailId, #containerId}")
     public boolean hasAccess(String emailId, String containerId) {
         Mapper<UserContainer> userContainerMapper = cassandraSessionService.getManager().mapper(UserContainer.class);
         UserContainer userContainer = userContainerMapper.get(emailId, containerId);
@@ -108,6 +108,7 @@ public class ContainerCoreService {
     }
 
     public HomeVO getUsageAndContainers(String emailId) {
+        HomeVO homeVO = new HomeVO();
         Session session = cassandraSessionService.getSession();
         ResultSet resultSet = session.execute(cassandraSessionService.getAllUserContainers().bind(emailId));
         Iterator<Row> rowIterator = resultSet.iterator();
@@ -127,41 +128,50 @@ public class ContainerCoreService {
             ContainerVO containerVO = new ContainerVO(containerId,null,null,null,accessType);
             map.put(containerId, containerVO);
         }
-        containerIds.deleteCharAt(containerIds.length()-1);
-        authoredContainers.deleteCharAt(authoredContainers.length()-1);
+        if(containerIds.length()>0) {
+            containerIds.deleteCharAt(containerIds.length()-1);
 
-        resultSet = session.execute("SELECT * FROM container WHERE id IN ("+containerIds+")");
-        rowIterator = resultSet.iterator();
-        while (rowIterator.hasNext()) {
-            Row row = rowIterator.next();
-            String containerId = row.getString(0);
-            String name = row.getString(1);
-            String type = row.getString(2);
+            resultSet = session.execute("SELECT * FROM container WHERE id IN ("+containerIds+")");
+            rowIterator = resultSet.iterator();
+            while (rowIterator.hasNext()) {
+                Row row = rowIterator.next();
+                String containerId = row.getString(0);
+                String name = row.getString(1);
+                String type = row.getString(2);
 
-            ContainerVO containerVO = map.get(containerId);
-            containerVO.setName(name);
-            containerVO.setType(type);
+                ContainerVO containerVO = map.get(containerId);
+                containerVO.setName(name);
+                containerVO.setType(type);
+            }
         }
+        if(authoredContainers.length()>0) {
+            authoredContainers.deleteCharAt(authoredContainers.length()-1);
 
-        resultSet = session.execute("SELECT sum(trans),sum(upload_size),sum(download_size) FROM image_service_use WHERE container_id IN ("+authoredContainers+")");
-        Row row = resultSet.one();
-        Integer transformationCount = row.getInt(0);
-        Integer uploadSize = row.getInt(1);
-        Integer downloadSize = row.getInt(2);
+            resultSet = session.execute("SELECT sum(trans),sum(upload_size),sum(download_size) FROM image_service_use WHERE container_id IN ("+authoredContainers+")");
+            Row row = resultSet.one();
+            Integer transformationCount = row.getInt(0);
+            Integer uploadSize = row.getInt(1);
+            Integer downloadSize = row.getInt(2);
 
-        resultSet = session.execute("SELECT sum(size), totalcost(size, toTimestamp(ts)) from image_storage_use WHERE container_id IN ("+authoredContainers+")");
-        row = resultSet.one();
-        Integer storedSize = row.getInt(0);
-        Double storedSizeTime = row.getDouble(1);
+            resultSet = session.execute("SELECT sum(size), totalcost(size, toTimestamp(ts)) from image_storage_use WHERE container_id IN ("+authoredContainers+")");
+            row = resultSet.one();
+            Integer storedSize = row.getInt(0);
+            Double storedSizeTime = row.getDouble(1);
 
-        resultSet = session.execute("SELECT count(*) FROM image WHERE container_id IN ("+authoredContainers+")");
-        row = resultSet.one();
-        Long images = row.getLong(0);
+            resultSet = session.execute("SELECT count(*) FROM image WHERE container_id IN ("+authoredContainers+")");
+            row = resultSet.one();
+            Long images = row.getLong(0);
 
-        UsageDataVO usageDataVO = new UsageDataVO(authoredContainerSize, images.intValue(), transformationCount, SizeUtil.calculateSize(storedSize),
-                SizeUtil.calculateSize(uploadSize), SizeUtil.calculateSize(downloadSize), SizeUtil.calculateTimeSize(storedSizeTime));
-        HomeVO homeVO = new HomeVO();
-        homeVO.setUsageDataVO(usageDataVO);
+            UsageDataVO usageDataVO = new UsageDataVO(authoredContainerSize, images.intValue(), transformationCount, SizeUtil.calculateSize(storedSize),
+                    SizeUtil.calculateSize(uploadSize), SizeUtil.calculateSize(downloadSize), SizeUtil.calculateTimeSize(storedSizeTime));
+
+            homeVO.setUsageDataVO(usageDataVO);
+        } else {
+            UsageDataVO usageDataVO = new UsageDataVO(authoredContainerSize, 0, 0, SizeUtil.calculateSize(0),
+                    SizeUtil.calculateSize(0), SizeUtil.calculateSize(0), SizeUtil.calculateTimeSize(0d));
+
+            homeVO.setUsageDataVO(usageDataVO);
+        }
         homeVO.setContainerVOs(new ArrayList<>(map.values()));
         return homeVO;
     }

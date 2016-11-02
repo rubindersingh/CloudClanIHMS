@@ -10,12 +10,16 @@ import com.asu.cloudclan.service.swift.SwiftStorageService;
 import com.asu.cloudclan.vo.ErrorVO;
 import com.asu.cloudclan.vo.ImageMetadataVO;
 import com.asu.cloudclan.vo.TransformationVO;
+import org.apache.commons.io.IOUtils;
+import org.javaswift.joss.command.impl.object.InputStreamWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -97,14 +101,15 @@ public class ImageService {
                 }
             }
 
-            InputStream inputStream = swiftStorageService.downloadObject(objectId);
-            if(inputStream == null) {
+            byte[] bytes = swiftStorageService.downloadObject(objectId);
+            if(bytes == null) {
                 return null; //As object not found
             }
+            InputStream inputStream = new ByteArrayInputStream(bytes);
+
             ImageMetadataVO imageMetadataVO = new ImageMetadataVO();
             imageMetadataVO.setContainerId(containerId);
             imageMetadataVO.setUrl(urlWithoutExt);
-            imageMetadataVO.setDownloadSize(inputStream.available());
             if(transform && !transformationFound) {
                 //Run required transform here and return
                 inputStream = coreTransformationService.transform(inputStream, transformationVO);
@@ -116,7 +121,9 @@ public class ImageService {
                     imageMetadataVO.setStoredSize(inputStream.available());
                     imageMetadataVO.setType(ImageFormat.JPG.name());
                     try {
-                        swiftStorageService.uploadObject(containerId+urlWithoutExt+transformation, inputStream);
+                        bytes = IOUtils.toByteArray(inputStream);
+                        inputStream = new ByteArrayInputStream(bytes);
+                        swiftStorageService.uploadObject(containerId+urlWithoutExt+transformation, new ByteArrayInputStream(bytes));
                         redisCacheStoreService.saveImageObjectId(containerId+urlWithoutExt+transformation, containerId+urlWithoutExt+transformation);
                         imageMetadataVO.setObjectId(containerId+urlWithoutExt+transformation);
                     } catch (Exception e) {
@@ -125,6 +132,8 @@ public class ImageService {
                     }
                 }
             }
+
+            imageMetadataVO.setDownloadSize(inputStream.available());
             rabbitMQSenderService.sendDownloadInfo(imageMetadataVO);
             return inputStream;
         } catch (Exception e) {

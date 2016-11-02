@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 /**
@@ -31,9 +32,14 @@ public class SwiftStorageCoreService {
         object.uploadObject(inputStream);
     }
 
-    public InputStream downloadObject(String objectId) {
-        Container container = account.getContainer("images");
-        StoredObject object = container.getObject(objectId);
-        return object.downloadObjectAsInputStream();
+    public byte[] downloadObject(String objectId) {
+        try {
+            Container container = account.getContainer("images");
+            StoredObject object = container.getObject(objectId);
+            return object.downloadObject();
+        } catch (Exception e) {
+            throw e;
+        }
+
     }
 }

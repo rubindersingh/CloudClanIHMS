@@ -262,4 +262,10 @@ public class TransformationVO {
             return false;
         }
     }
+
+    public void convert() {
+        if(finalTransformationVO == null) {
+            validateAndConvert();
+        }
+    }
 }

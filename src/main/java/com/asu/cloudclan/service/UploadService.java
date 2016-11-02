@@ -77,11 +77,13 @@ public class UploadService {
                                 imageMetadataVO.setTransformed(1);
                             }
                             imageMetadataVO.setStoredSize((int) inputStream.available());
-                            swiftStorageService.uploadObject(uploadVO.getContainerId()+imageVO.getUrl()+imageMetadataVO.getTransformation(), inputStream);
                             String url = fullName.substring(0,dotLastIndex);
-                            imageMetadataVO.setObjectId(uploadVO.getContainerId()+url+imageMetadataVO.getTransformation());
+                            String objectId = uploadVO.getContainerId()+url+imageMetadataVO.getTransformation();
+                            swiftStorageService.uploadObject(objectId, inputStream);
+                            imageMetadataVO.setObjectId(objectId);
                             imageMetadataVO.setUrl(url);
                             imageVO.setStatus(UploadStatus.COMPLETED);
+                            imageMetadataVO.setStatus(UploadStatus.COMPLETED);
                         } else {
                             imageVO.setStatus(UploadStatus.SKIPPED);
                             imageMetadataVO.setStatus(UploadStatus.SKIPPED);

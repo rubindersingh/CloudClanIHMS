@@ -20,7 +20,7 @@ public class HomeController {
     @Autowired
     ContainerCoreService containerCoreService;
 
-    @RequestMapping(value = "/index*", method = RequestMethod.GET)
+    @RequestMapping(value = {"/", "/index*"}, method = RequestMethod.GET)
     public String index() {
         return "index";
     }

@@ -12,6 +12,8 @@ import com.asu.cloudclan.service.ImageService;
 import com.asu.cloudclan.vo.TransformationVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +25,8 @@ import org.springframework.web.servlet.HandlerMapping;
 @RestController
 public class ImageController {
 
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
+
 	@Autowired
 	ImageService imageService;
 
@@ -32,8 +36,6 @@ public class ImageController {
 		String prefix = (String) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
 		AntPathMatcher antPathMatcher = new AntPathMatcher();
 		String imageUrl = antPathMatcher.extractPathWithinPattern(prefix, fullPath);
-		System.out.println(containerId);
-		System.out.println(state);
 		try {
 			InputStream inputStream = imageService.getImage(containerId, state, imageUrl, transformationVO);
 			if(inputStream != null) {
@@ -44,6 +46,8 @@ public class ImageController {
 				responseOutputStream.flush();
 				responseOutputStream.close();
 			} else {
+				log.error("Images not found");
+				response.setStatus(404);
 				response.setContentType("application/json");
 				return new ObjectMapper().writeValueAsString(transformationVO.errorVOs);
 			}

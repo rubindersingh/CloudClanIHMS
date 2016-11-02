@@ -37,7 +37,7 @@ public class SwiftStorageService {
         }
     }
 
-    public InputStream downloadObject(String objectId) {
+    public byte[] downloadObject(String objectId) {
         try {
             return swiftStorageCoreService.downloadObject(objectId);
         } catch (Exception e) {

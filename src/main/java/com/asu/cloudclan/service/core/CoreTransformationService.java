@@ -17,7 +17,7 @@ public class CoreTransformationService {
     }
 
     public InputStream transform(InputStream inputStream, TransformationVO transformationVO) {
-        FinalTransformationVO finalTransformationVO = new FinalTransformationVO();
+        transformationVO.convert();
         return new ScalaTransformationService().transform(inputStream, transformationVO.finalTransformationVO);
     }
 }

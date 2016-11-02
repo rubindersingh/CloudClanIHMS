@@ -39,7 +39,7 @@ public class WebSecurityConfig {
         protected void configure(HttpSecurity http) throws Exception {
             http.csrf().disable()
                     .authorizeRequests()
-                    .antMatchers("/register*","/css/**").permitAll()
+                    .antMatchers("/", "/index*" ,"/register*","/css/**","/js/**", "/assets/**").permitAll()
                     .antMatchers("/registration").permitAll()
                     .antMatchers("/images/{state}/{containerId}/**").access("@springSecurityAuthenticationService.isContainerAccessible(authentication,#containerId)")
                     .antMatchers("/images*//**", "/containers*//**", "/**")

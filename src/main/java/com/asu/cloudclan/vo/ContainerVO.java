@@ -1,8 +1,11 @@
 package com.asu.cloudclan.vo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * Created by rubinder on 10/26/16.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ContainerVO extends RequestResponseVO {
     private String id;
     private String type;
