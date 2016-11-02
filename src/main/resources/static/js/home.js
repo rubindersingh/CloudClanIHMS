@@ -7,6 +7,8 @@ $( document ).ready(function() {
     var showUpload = function () {
         containerId = $(this).attr('id');
         $(".upload .breadcrumb .active").text($(this).find('span').text());
+        $(".upload .successMessage").empty();
+        $(".upload .errorMessage").empty();
         $(".containers").hide();
         $(".upload").show();
     };
@@ -16,9 +18,13 @@ $( document ).ready(function() {
         containerId = null;
         $(".containers").show();
         $(".upload").hide();
+        $(".upload .successMessage").empty();
+        $(".upload .errorMessage").empty();
     });
 
     $(".form-create-container .btn").click(function () {
+        $(".form-create-container .errorMessage").empty();
+        $(".form-create-container .successMessage").empty();
         $.ajax({
             url: "/containers",
             type: 'POST',
@@ -65,6 +71,8 @@ $( document ).ready(function() {
     });
 
     $(".form-share-container .btn").click(function () {
+        $(".form-share-container .errorMessage").empty();
+        $(".form-share-container .successMessage").empty();
         var data = $(".form-share-container").serialize();
         data = data +"&id="+containerId;
         $.ajax({
@@ -106,6 +114,8 @@ $( document ).ready(function() {
     });
 
     var uploadFiles = function (e) {
+        $(".upload .successMessage").empty();
+        $(".upload .errorMessage").empty();
         var data = new FormData();
         data.append('containerId', containerId);
         data.append('keepOriginal', true);

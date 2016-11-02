@@ -9,6 +9,7 @@ $( document ).ready(function() {
             data: $(".form-signin").serialize(),
             success: function(result) {
                 if(result.errorVOs) {
+                    $(".errorMessage").empty();
                     $.each(result.errorVOs, function (i, errorVO) {
                         $(".errorMessage").append('<div class="alert alert-danger alert-dismissible" role="alert">'
                             + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
@@ -16,6 +17,7 @@ $( document ).ready(function() {
                             + '</div>');
                     })
                 } else {
+                    $(".successMessage").empty();
                     $(".successMessage").append('<div class="alert alert-success alert-dismissible" role="alert">'
                         + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
                         + 'Registration Successfull. Please go to <a href="/home.html" class="alert-link">home page.</a>'
