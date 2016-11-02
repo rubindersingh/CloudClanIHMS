@@ -1,0 +1,31 @@
+**********************************************************************************************
+Author : Rubinder Singh
+Acknowledgement: I thank Redis.io for wonderful documentation which enabled me
+to learn and setup Redis Cluster server with ease and Spring Data Redis Documentation enabled to me to integrate it.
+More could be found at below link:
+http://redis.io/topics/cluster-tutorial
+
+I also acknowledge that digitalocean and javacodegeeks blogs helped me very much.
+Please follow at below links:
+https://www.javacodegeeks.com/2015/09/redis-clustering.html
+https://www.digitalocean.com/community/tutorials/how-to-configure-a-redis-cluster-on-ubuntu-14-04
+**********************************************************************************************
+
+1. Run installation using command on all servers you want to make part of redis cluster:
+    sudo apt-get install redis-server
+
+2. Copy Sample Redis Conf from sample-conf folder and paste it in '/etc/redis/'. It will replace existing file.
+   Now go over following properties:
+
+    tcp-keepalive
+    maxmemory
+    maxmemory-policy
+    cluster-enabled yes
+    cluster-config-file nodes.conf
+    cluster-node-timeout 5000
+    cluster-slave-validity-factor 2
+
+3. Now when all nodes will be independently setup, we will create cluster using below commands.
+    a. CLUSTER MEET : to connect nodes to each other
+    b. CLUSTER ADDSLOTS : to assign slots to cluster node
+    c. SLAVEOF : to mark node slave of some other node

@@ -1,0 +1,22 @@
+**********************************************************************************************
+Author : Rubinder Singh
+Acknowledgement: I thank RabbitMQ for wonderful documentation which enabled me
+to learn and setup RabbitMQ server with ease and Spring AMPQ Documentation enabled to me to integrate it.
+More could be found at below links:
+https://www.rabbitmq.com/documentation.html
+https://projects.spring.io/spring-amqp/
+http://docs.spring.io/spring-amqp/reference/html/
+https://www.rabbitmq.com/management.html
+**********************************************************************************************
+
+1. Run installation using command:
+    sudo apt-get install rabbitmq
+
+2. Enable rabbitmq management:
+    rabbitmq-plugins enable rabbitmq_management
+
+3. Create new user after going to http://server-name:15672/
+
+4. Make it admin and give all privileges to  virtual host '/'
+
+5. Use its credential to connect to RabbitMQ server.
