@@ -22,7 +22,7 @@ Our Project relies on following technology stack:
 * **RabbitMQ** instructions docs is provided in **instructions** folder.
 * **Nginx plus** can be downloaded from Nginx site. It is only a monthly trial version. Nginx **sample-conf** files has been provided.
 * **Python Script** to check status and then take decision to add or drop nodes from load balancer is given in **scripts** folder.
-* ***Jmeter Scipts* to do performance testing can be found in scripts jmeter folder.
+* **Jmeter Scipts** to do performance testing can be found in scripts jmeter folder.
 
 # Buid and Deployment
 
