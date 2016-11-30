@@ -40,3 +40,4 @@ cassandra:
   port: 9042
 logging:
   file: /home/ubuntu/logs/cloudclanihms.log
+instanceId: 1

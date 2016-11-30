@@ -15,6 +15,7 @@ import com.asu.cloudclan.vo.UploadVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,8 @@ import java.util.Locale;
 @Service
 public class UploadService {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
+    @Value("${instanceId}")
+    private int instanceId;
 
     @Autowired
     private MessageSource messageSource;
@@ -79,6 +82,7 @@ public class UploadService {
                             imageMetadataVO.setStoredSize((int) inputStream.available());
                             String url = fullName.substring(0,dotLastIndex);
                             String objectId = uploadVO.getContainerId()+url+imageMetadataVO.getTransformation();
+                            log.info("Web "+instanceId+": Uploading resource to swift object store.");
                             swiftStorageService.uploadObject(objectId, inputStream);
                             imageMetadataVO.setObjectId(objectId);
                             imageMetadataVO.setUrl(url);
@@ -101,6 +105,7 @@ public class UploadService {
                 }
                 uploadVO.setFiles(null);
                 uploadVO.setImageMetadataVOs(imageMetadataVOs);
+                log.info("Web "+instanceId+": Sending upload meta info statistics to worker servers");
                 rabbitMQSenderService.sendUploadInfo(uploadVO);
                 uploadVO.setImageMetadataVOs(null);
                 uploadVO.setImageVOs(imageVOs);

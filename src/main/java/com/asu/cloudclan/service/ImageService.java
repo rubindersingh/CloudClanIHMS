@@ -15,6 +15,7 @@ import org.javaswift.joss.command.impl.object.InputStreamWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,8 @@ import java.util.Map;
 @Service
 public class ImageService {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
+    @Value("${instanceId}")
+    private int instanceId;
 
     @Autowired
     private MessageSource messageSource;
@@ -70,6 +73,7 @@ public class ImageService {
 
             //Look up for container+URL+transformation in redis first else proceed to next lines
             // If not found, first validate transformation
+            log.info("Web "+instanceId+": Looking for resource object id in cache");
             String objectId = redisCacheStoreService.lookupImageObjectId(containerId+urlWithoutExt+transformation);
             boolean transformationFound = false;
             if(objectId == null) {
@@ -79,8 +83,10 @@ public class ImageService {
                     transformationVO.errorVOs = errorVOs;
                     return null;
                 }
+                log.info("Web "+instanceId+": Looking for resource in main database");
                 Image image = imageCoreService.get(containerId, urlWithoutExt);
                 if(image == null) {
+                    log.info("Web "+instanceId+": Resource not found in main DB");
                     ErrorVO errorVO = new ErrorVO(messageSource.getMessage("invalid.image.url",null,null));
                     errorVOs.add(errorVO);
                     transformationVO.errorVOs = errorVOs;
@@ -97,10 +103,12 @@ public class ImageService {
                 } else {
                     objectId = metadataMap.get(transformation);
                     transformationFound = true;
+                    log.info("Web "+instanceId+": Transformation found from main database");
                     redisCacheStoreService.saveImageObjectId(containerId+urlWithoutExt+transformation, objectId);
                 }
             }
 
+            log.info("Web "+instanceId+": Downloading resource from swift object store.");
             byte[] bytes = swiftStorageService.downloadObject(objectId);
             if(bytes == null) {
                 return null; //As object not found
@@ -112,6 +120,7 @@ public class ImageService {
             imageMetadataVO.setUrl(urlWithoutExt);
             if(transform && !transformationFound) {
                 //Run required transform here and return
+                log.info("Web "+instanceId+": Transforming object as per provided parameters");
                 inputStream = coreTransformationService.transform(inputStream, transformationVO);
                 imageMetadataVO.setDownloadSize(inputStream.available());
 
@@ -125,15 +134,17 @@ public class ImageService {
                         inputStream = new ByteArrayInputStream(bytes);
                         swiftStorageService.uploadObject(containerId+urlWithoutExt+transformation, new ByteArrayInputStream(bytes));
                         redisCacheStoreService.saveImageObjectId(containerId+urlWithoutExt+transformation, containerId+urlWithoutExt+transformation);
+                        log.info("Web "+instanceId+": Saving transformation for faster retrieval next time");
                         imageMetadataVO.setObjectId(containerId+urlWithoutExt+transformation);
                     } catch (Exception e) {
-                        log.error("Unable to save tranformed image: ",e);
+                        log.error("Unable to save transformed image: ",e);
                         imageMetadataVO.setObjectId(null);
                     }
                 }
             }
 
             imageMetadataVO.setDownloadSize(inputStream.available());
+            log.info("Web "+instanceId+": Sending service usage statistics for this request to worker servers via queue");
             rabbitMQSenderService.sendDownloadInfo(imageMetadataVO);
             return inputStream;
         } catch (Exception e) {
