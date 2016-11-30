@@ -32,7 +32,7 @@ public class UploadController {
 
     @RequestMapping(value="/images/", method = RequestMethod.POST, produces = {"application/json"})
     public UploadVO upload(UploadVO uploadVO) {
-        log.info("Web "+instanceId+": Request upload request");
+        log.info("Web "+instanceId+": Request for upload images");
         uploadService.upload(uploadVO);
         return uploadVO;
     }

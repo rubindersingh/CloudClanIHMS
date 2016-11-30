@@ -4,7 +4,10 @@ import com.asu.cloudclan.service.cassandra.ContainerCoreService;
 import com.asu.cloudclan.vo.ContainerVO;
 import com.asu.cloudclan.vo.HomeVO;
 import com.asu.cloudclan.vo.UsageDataVO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -17,6 +20,9 @@ import java.util.List;
 @Controller
 public class HomeController {
 
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    @Value("${instanceId}")
+    private int instanceId;
     @Autowired
     ContainerCoreService containerCoreService;
 
@@ -32,6 +38,7 @@ public class HomeController {
 
     @RequestMapping(value = "/home*", method = RequestMethod.GET)
     public String home(ModelMap model) {
+        log.info("Web "+instanceId+": Request for home page");
         String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         HomeVO homeVO = containerCoreService.getUsageAndContainers(currentUserEmail);
         UsageDataVO usageDataVO = homeVO.getUsageDataVO();
